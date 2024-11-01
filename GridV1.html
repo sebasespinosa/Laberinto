@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unir y Eliminar Líneas en Canvas</title>
+  <style>
+    canvas {
+      border: 1px solid #ddd;
+      display: block;
+      margin: 20px auto;
+      background-color: #f7f7f7;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="miCanvas" width="350" height="350"></canvas>
+
+  <script>
+    const canvas = document.getElementById('miCanvas');
+    const ctx = canvas.getContext('2d');
+    const puntos = [];
+    const lineas = []; // Array para almacenar las líneas dibujadas
+    const filas = 5;
+    const columnas = 5;
+    const separacion = 60;
+    let primerPunto = null;
+
+    // Función para crear puntos en posiciones específicas
+    function crearPuntos() {
+      for (let fila = 0; fila < filas; fila++) {
+        for (let columna = 0; columna < columnas; columna++) {
+          const x = columna * separacion + 30;
+          const y = fila * separacion + 30;
+          puntos.push({ x, y, fila, columna });
+          dibujarPunto(x, y);
+        }
+      }
+    }
+
+    // Función para dibujar un punto
+    function dibujarPunto(x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#3498db';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Función para manejar clics en el canvas
+    canvas.addEventListener('click', (event) => {
+      const { offsetX, offsetY } = event;
+      const puntoCercano = puntos.find(punto => 
+        Math.hypot(punto.x - offsetX, punto.y - offsetY) < 10
+      );
+      if (puntoCercano) seleccionarPunto(puntoCercano);
+    });
+
+    // Función para manejar la selección de puntos y dibujar/eliminar líneas
+    function seleccionarPunto(punto) {
+      if (!primerPunto) {
+        primerPunto = punto;
+        resaltarPunto(punto, '#e74c3c');
+      } else {
+        if (estanEnLinea(primerPunto, punto)) {
+          const lineaExiste = lineas.some(linea => 
+            (linea.p1 === primerPunto && linea.p2 === punto) ||
+            (linea.p1 === punto && linea.p2 === primerPunto)
+          );
+
+          if (lineaExiste) {
+            eliminarLinea(primerPunto, punto);
+          } else {
+            agregarLinea(primerPunto, punto);
+          }
+        }
+        resaltarPunto(primerPunto, '#3498db');
+        primerPunto = null;
+      }
+    }
+
+    // Función para resaltar un punto
+    function resaltarPunto(punto, color) {
+      ctx.beginPath();
+      ctx.arc(punto.x, punto.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Función para verificar si dos puntos están en la misma fila o columna
+    function estanEnLinea(punto1, punto2) {
+      return punto1.fila === punto2.fila || punto1.columna === punto2.columna;
+    }
+
+    // Función para agregar una línea entre dos puntos
+    function agregarLinea(punto1, punto2) {
+      lineas.push({ p1: punto1, p2: punto2 });
+      dibujarLinea(punto1, punto2);
+    }
+
+    // Función para dibujar una línea entre dos puntos
+    function dibujarLinea(punto1, punto2) {
+      ctx.beginPath();
+      ctx.moveTo(punto1.x, punto1.y);
+      ctx.lineTo(punto2.x, punto2.y);
+      ctx.strokeStyle = '#3498db';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    // Función para eliminar una línea entre dos puntos
+    function eliminarLinea(punto1, punto2) {
+      // Filtrar la línea que queremos eliminar del array de líneas
+      const nuevasLineas = lineas.filter(linea => 
+        !(linea.p1 === punto1 && linea.p2 === punto2) &&
+        !(linea.p1 === punto2 && linea.p2 === punto1)
+      );
+      lineas.length = 0;
+      lineas.push(...nuevasLineas);
+      redibujarCanvas();
+    }
+
+    // Función para redibujar el canvas completo
+    function redibujarCanvas() {
+      // Limpia el canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Redibuja todos los puntos
+      puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
+
+      // Redibuja todas las líneas restantes
+      lineas.forEach(linea => dibujarLinea(linea.p1, linea.p2));
+      console.log(lineas);
+    }
+
+    // Crear los puntos en el canvas
+    crearPuntos();
+  </script>
+</body>
+</html>

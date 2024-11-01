@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar Área y Colocar Sprite en Canvas</title>
+  <style>
+    canvas {
+      border: 1px solid #ddd;
+      display: block;
+      margin: 20px auto;
+      background-color: #f7f7f7;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="miCanvas" width="600" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('miCanvas');
+    const ctx = canvas.getContext('2d');
+    const puntos = [];
+    const lineas = [];
+    const filas = 5;
+    const columnas = 10;
+    const separacion = 60;
+    let puntosSeleccionados = [];
+    let sprite = new Image(); // Objeto de imagen para el sprite
+    sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
+
+    // Función para crear puntos en posiciones específicas
+    function crearPuntos() {
+      for (let fila = 0; fila < filas; fila++) {
+        for (let columna = 0; columna < columnas; columna++) {
+          const x = columna * separacion + 30;
+          const y = fila * separacion + 30;
+          puntos.push({ x, y, fila, columna });
+          dibujarPunto(x, y);
+        }
+      }
+    }
+
+    // Función para dibujar un punto
+    function dibujarPunto(x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#3498db';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Función para manejar clics en el canvas
+    canvas.addEventListener('click', (event) => {
+      const { offsetX, offsetY } = event;
+      const puntoCercano = puntos.find(punto => 
+        Math.hypot(punto.x - offsetX, punto.y - offsetY) < 10
+      );
+      if (puntoCercano) seleccionarPunto(puntoCercano);
+    });
+
+    // Función para manejar la selección de puntos y dibujar líneas/áreas
+    function seleccionarPunto(punto) {
+      if (puntosSeleccionados.length < 4) {
+        puntosSeleccionados.push(punto);
+        resaltarPunto(punto, '#e74c3c');
+      }
+      if (puntosSeleccionados.length === 4) {
+        dibujarRectangulo(puntosSeleccionados);
+        colocarSpriteEnArea(puntosSeleccionados);
+        resetearSeleccion();
+      }
+    }
+
+    // Función para resaltar un punto
+    function resaltarPunto(punto, color) {
+      ctx.beginPath();
+      ctx.arc(punto.x, punto.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Función para dibujar un rectángulo alrededor de los puntos seleccionados
+    function dibujarRectangulo(puntos) {
+      const xMin = Math.min(puntos[0].x, puntos[1].x, puntos[2].x, puntos[3].x);
+      const xMax = Math.max(puntos[0].x, puntos[1].x, puntos[2].x, puntos[3].x);
+      const yMin = Math.min(puntos[0].y, puntos[1].y, puntos[2].y, puntos[3].y);
+      const yMax = Math.max(puntos[0].y, puntos[1].y, puntos[2].y, puntos[3].y);
+
+      ctx.beginPath();
+      ctx.rect(xMin, yMin, xMax - xMin, yMax - yMin);
+      ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)'; // Color del borde
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    // Función para colocar un sprite dentro del área seleccionada
+    function colocarSpriteEnArea(puntos) {
+      const xMin = Math.min(puntos[0].x, puntos[1].x, puntos[2].x, puntos[3].x);
+      const xMax = Math.max(puntos[0].x, puntos[1].x, puntos[2].x, puntos[3].x);
+      const yMin = Math.min(puntos[0].y, puntos[1].y, puntos[2].y, puntos[3].y);
+      const yMax = Math.max(puntos[0].y, puntos[1].y, puntos[2].y, puntos[3].y);
+
+      // Calcular la posición central del rectángulo
+      const spriteX = xMin + (xMax - xMin) / 2 - 15; // Ajuste para centrar el sprite
+      const spriteY = yMin + (yMax - yMin) / 2 - 15;
+
+      ctx.drawImage(sprite, spriteX, spriteY, 30, 30); // Dibujar el sprite en la posición calculada
+    }
+
+    // Función para resetear la selección
+    function resetearSeleccion() {
+      puntosSeleccionados.forEach(punto => {
+        resaltarPunto(punto, '#3498db'); // Restaura color de puntos
+      });
+      puntosSeleccionados = []; // Limpiar selección
+    }
+
+    // Crear los puntos en el canvas
+    crearPuntos();
+  </script>
+</body>
+</html>

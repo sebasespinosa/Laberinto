@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colocar Sprite en Canvas</title>
+  <style>
+    canvas {
+      border: 1px solid #ddd;
+      display: block;
+      margin: 20px auto;
+      background-color: #f7f7f7;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="miCanvas" width="600" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('miCanvas');
+    const ctx = canvas.getContext('2d');
+    const puntos = [];
+    const filas = 5;
+    const columnas = 10;
+    const separacion = 60;
+    const sprite = new Image(); // Objeto de imagen para el sprite
+    sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
+
+    // Función para crear puntos en posiciones específicas
+    function crearPuntos() {
+      for (let fila = 0; fila < filas; fila++) {
+        for (let columna = 0; columna < columnas; columna++) {
+          const x = columna * separacion + 30;
+          const y = fila * separacion + 30;
+          puntos.push({ x, y, fila, columna });
+          dibujarPunto(x, y);
+        }
+      }
+    }
+
+    // Función para dibujar un punto
+    function dibujarPunto(x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#3498db';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Función para manejar clics en el canvas
+    canvas.addEventListener('click', (event) => {
+      const { offsetX, offsetY } = event;
+      colocarSpriteEnAreaCercana(offsetX, offsetY);
+    });
+
+    // Función para colocar un sprite en el área delimitada por los cuatro puntos más cercanos
+    function colocarSpriteEnAreaCercana(x, y) {
+      // Obtener los cuatro puntos más cercanos
+      const puntosCercanos = puntos
+        .map(punto => ({
+          punto,
+          distancia: Math.hypot(punto.x - x, punto.y - y),
+        }))
+        .sort((a, b) => a.distancia - b.distancia)
+        .slice(0, 4) // Obtener los cuatro más cercanos
+        .map(item => item.punto);
+
+      // Calcular el rectángulo delimitado por los puntos cercanos
+      const xMin = Math.min(...puntosCercanos.map(p => p.x));
+      const xMax = Math.max(...puntosCercanos.map(p => p.x));
+      const yMin = Math.min(...puntosCercanos.map(p => p.y));
+      const yMax = Math.max(...puntosCercanos.map(p => p.y));
+
+      // Dibuja el rectángulo delimitador
+      ctx.beginPath();
+      ctx.rect(xMin, yMin, xMax - xMin, yMax - yMin);
+      ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)'; // Color del borde
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+
+      // Colocar el sprite en el centro del rectángulo
+      const spriteX = xMin + (xMax - xMin) / 2 - 15; // Ajuste para centrar el sprite
+      const spriteY = yMin + (yMax - yMin) / 2 - 15;
+
+      ctx.drawImage(sprite, spriteX, spriteY, 30, 30); // Dibujar el sprite
+    }
+
+    // Crear los puntos en el canvas
+    crearPuntos();
+  </script>
+</body>
+</html>
