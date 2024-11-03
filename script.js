@@ -23,16 +23,22 @@ function inicializarCanvas(){
 
     // Función para crear puntos en posiciones específicas
     function crearPuntos() {
-      for (let fila = 0; fila < filas; fila++) {
-        for (let columna = 0; columna < columnas; columna++) {
-          const x = columna * separacion + 30;
-          const y = fila * separacion + 30;
-          puntos.push({ x, y, fila, columna });
-          dibujarPunto(x, y);
+      if(puntos.length == 0)
+      {
+        for (let fila = 0; fila < filas; fila++) {
+          for (let columna = 0; columna < columnas; columna++) {
+            const x = columna * separacion + 30;
+            const y = fila * separacion + 30;
+            puntos.push({ x, y, fila, columna });
+            dibujarPunto(x, y);
+          }
         }
       }
     }
 
+    function redibujarPuntos(){
+      puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
+    }
     // Función para dibujar un punto
     function dibujarPunto(x, y) {
       ctx.beginPath();
@@ -68,6 +74,7 @@ function inicializarCanvas(){
         //   columna: parseInt((xMin + (xMax - xMin) / 2 - 15) / separacion, 10),
         //   fila: parseInt((yMin + (yMax - yMin) / 2 - 15) / separacion, 10),
         // };
+        spriteArea = puntosCercanos; // Guardar área del sprite
         // Aquí dibuja el rectángulo delimitador
         ctx.beginPath();
         ctx.rect(xMin, yMin, xMax - xMin, yMax - yMin);
@@ -111,7 +118,7 @@ function inicializarCanvas(){
         fila: parseInt((yMin + (yMax - yMin) / 2 - 15) / separacion, 10),
       };
       spriteArea = puntosCercanos; // Guardar área del sprite
-      console.log("Ubicando sprite x: " + spritePos.x + ' y: ' + spritePos.y);
+      //console.log("Ubicando sprite x: " + spritePos.x + ' y: ' + spritePos.y);
       // Dibujar el sprite en la nueva posición
       ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite
     }
@@ -121,7 +128,8 @@ function inicializarCanvas(){
       if (spritePos) {
         calcularSpriteAreaXY(spritePos.x, spritePos.y);
         const currentArea = spriteArea;
-        console.log("Init move sprite x: " + spritePos.x + ' y: ' + spritePos.y + " Fila: " + spritePos.fila + " Columna: " + spritePos.columna);
+        //console.log("Init move sprite x: " + spritePos.x + ' y: ' + spritePos.y + " Fila: " + spritePos.fila + " Columna: " + spritePos.columna);
+        console.log("Current area: " + currentArea);
         // Obtener índices de los puntos en el área actual
         // const xIndex = currentArea.findIndex(p => p.x === currentArea[0].x);
         // const yIndex = currentArea.findIndex(p => p.y === currentArea[0].y);
@@ -143,8 +151,8 @@ function inicializarCanvas(){
         }
         console.log("Final move sprite x: " + spritePos.x + ' y: ' + spritePos.y + " Fila: " + spritePos.fila + " Columna: " + spritePos.columna);
         // Redibujar el canvas y el sprite en la nueva posición
-        //ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
-        crearPuntos(); // Redibujar los puntos
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+        redibujarPuntos(); // Redibujar los puntos
         ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición
         redibujarLineas();
       }
