@@ -12,9 +12,17 @@
       background-color: #f7f7f7;
     }
   </style>
-  <script src="script.js" defer></script>
+  
 </head>
 <body>
   <canvas id="miCanvas" width="600" height="400"></canvas>
+  <script src="script.js" defer></script>
+  <script>
+    // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
+    window.addEventListener('load', function() {
+        inicializarCanvas();  // Llama a la función del archivo externo
+        
+    });
+  </script>
 </body>
 </html>
