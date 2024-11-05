@@ -129,23 +129,26 @@ function inicializarCanvas(){
         calcularSpriteAreaXY(spritePos.x, spritePos.y);
         const currentArea = spriteArea;
         //console.log("Init move sprite x: " + spritePos.x + ' y: ' + spritePos.y + " Fila: " + spritePos.fila + " Columna: " + spritePos.columna);
-        console.log("Current area: " + currentArea);
-        // Obtener índices de los puntos en el área actual
-        // const xIndex = currentArea.findIndex(p => p.x === currentArea[0].x);
-        // const yIndex = currentArea.findIndex(p => p.y === currentArea[0].y);
-        // console.log("filas: " + filas + ". columna: " + columnas);
-        // Mover el sprite en la dirección deseada
+        console.log("Current area: " 
+          + currentArea[0].x + "|" + currentArea[0].y +".  "
+          + currentArea[1].x + "|" + currentArea[1].y +".  "
+          + currentArea[2].x + "|" + currentArea[2].y +".  "
+          + currentArea[3].x + "|" + currentArea[3].y +".  "
+          );
+        var lineasDetectadas = detectarLineasCurrentArea(lineas, currentArea);
+        console.log("La posición actual tiene una línea? " + lineasDetectadas.length);
         
-        if (direccion === 'up' && spritePos.fila > 0) {
+        // Mover el sprite en la dirección deseada        
+        if (direccion === 'up' && spritePos.fila > 0 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
           spritePos.y -= separacion; // Mover hacia arriba
           spritePos.fila--;
-        } else if (direccion === 'down' && spritePos.fila < filas - 2) {
+        } else if (direccion === 'down' && spritePos.fila < filas - 2 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
           spritePos.y += separacion; // Mover hacia abajo
           spritePos.fila++;        
-        } else if (direccion === 'left' && spritePos.columna > 0) {
+        } else if (direccion === 'left' && spritePos.columna > 0 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
           spritePos.x -= separacion; // Mover hacia la izquierda
           spritePos.columna--;
-        } else if (direccion === 'right' && spritePos.columna < columnas - 2) {
+        } else if (direccion === 'right' && spritePos.columna < columnas - 2 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
           spritePos.x += separacion; // Mover hacia la derecha
           spritePos.columna++;
         }
@@ -158,6 +161,42 @@ function inicializarCanvas(){
       }
     }
 
+    function detectarLineasCurrentArea(arregloPrincipal, objetoFiltro) {
+      var lineasDetectadas = arregloPrincipal.filter(obj => {
+        // Verifica si `p1` coincide con algún objeto en `objetoFiltro`
+        const p1Coincide = objetoFiltro.some(filtroObj =>
+          filtroObj.x === obj.p1.x &&
+          filtroObj.y === obj.p1.y 
+        );    
+        // Verifica si `p2` coincide con algún objeto en `objetoFiltro`
+        const p2Coincide = objetoFiltro.some(filtroObj =>
+          filtroObj.x === obj.p2.x &&
+          filtroObj.y === obj.p2.y 
+        );    
+        // Solo incluye el objeto si ambos, `p1` y `p2`, coinciden con algún objeto en `objetoFiltro`
+        return p1Coincide && p2Coincide;
+      });
+      //Detectar que orientación del objetoFiltro (CurrentArea) son las líneas detectadas.
+      lineasDetectadas.forEach(linea => {
+        if(linea.p1.fila === linea.p2.fila && linea.p1.fila < Math.max(objetoFiltro[0].fila,objetoFiltro[1].fila,objetoFiltro[2].fila,objetoFiltro[3].fila))
+        {
+          linea.orientacion = "up";
+        }
+        if(linea.p1.fila === linea.p2.fila && linea.p1.fila === Math.max(objetoFiltro[0].fila,objetoFiltro[1].fila,objetoFiltro[2].fila,objetoFiltro[3].fila))
+        {
+          linea.orientacion = "down";
+        }
+        if(linea.p1.columna === linea.p2.columna && linea.p1.columna < Math.max(objetoFiltro[0].columna,objetoFiltro[1].columna,objetoFiltro[2].columna,objetoFiltro[3].columna))
+        {
+          linea.orientacion = "left";
+        }
+        if(linea.p1.columna === linea.p2.columna && linea.p1.columna === Math.max(objetoFiltro[0].columna,objetoFiltro[1].columna,objetoFiltro[2].columna,objetoFiltro[3].columna))
+        {
+          linea.orientacion = "right";
+        }
+      });
+      return lineasDetectadas;
+    }
     // Función para agregar una línea entre dos puntos
     function agregarLinea(punto1, punto2) {
       lineas.push({ p1: punto1, p2: punto2 });
