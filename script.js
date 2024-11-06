@@ -199,8 +199,64 @@ function inicializarCanvas(){
     }
     // Función para agregar una línea entre dos puntos
     function agregarLinea(punto1, punto2) {
-      lineas.push({ p1: punto1, p2: punto2 });
-      dibujarLinea(punto1, punto2);
+      if(punto1.fila === punto2.fila)
+      {
+        //Se trata de una línea horizontal izquierda a derecha.
+        if(punto1.columna < punto2.columna)
+        {
+          let offsetColumna = punto1.columna;
+          for(let i = punto1.x; i < punto2.x; i = i + separacion)
+          {
+            let puntoX = {x: i, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
+            offsetColumna = offsetColumna + 1;
+            let puntoY = {x: i + separacion, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
+            lineas.push({ p1: puntoX, p2: puntoY });
+            dibujarLinea(puntoX, puntoY);
+          }
+        }
+        //Se trata de una línea horizontal derecha a izquierda.
+        if(punto2.columna < punto1.columna)
+        {
+          let offsetColumna = punto2.columna;
+          for(let i = punto2.x; i < punto1.x; i = i + separacion)
+          {
+            let puntoX = {x: i, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
+            offsetColumna = offsetColumna + 1;
+            let puntoY = {x: i + separacion, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
+            lineas.push({ p1: puntoX, p2: puntoY });
+            dibujarLinea(puntoX, puntoY);
+          }
+        }
+      }
+      if(punto1.columna === punto2.columna)
+      {       
+        //Se trata de una línea vertical arriba hacia abajo
+        if(punto1.fila < punto2.fila)
+        {
+          let offsetFila = punto1.fila;
+          for(let i = punto1.y; i < punto2.y; i = i + separacion)
+          {
+            let puntoX = {x: punto1.x, y: i, fila:offsetFila, columna:  punto1.columna };
+            offsetFila = offsetFila + 1;
+            let puntoY = {x: punto1.x, y: i + separacion, fila:offsetFila, columna: punto1.columna };
+            lineas.push({ p1: puntoX, p2: puntoY });
+            dibujarLinea(puntoX, puntoY);
+          }
+        }
+        //Se trata de una línea vertical arriba hacia abajo
+        if(punto2.fila < punto1.fila)
+        {
+          let offsetFila = punto2.fila;
+          for(let i = punto2.y; i < punto1.y; i = i + separacion)
+          {
+            let puntoX = {x: punto2.x, y: i, fila:offsetFila, columna:  punto2.columna };
+            offsetFila = offsetFila + 1;
+            let puntoY = {x: punto2.x, y: i + separacion, fila:offsetFila, columna: punto2.columna };
+            lineas.push({ p1: puntoX, p2: puntoY });
+            dibujarLinea(puntoX, puntoY);
+          }
+        }
+      }       
     }
 
     // Función para eliminar una línea entre dos puntos
