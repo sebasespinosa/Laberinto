@@ -47,12 +47,7 @@ function inicializarCanvas(){
       ctx.fill();
       ctx.closePath();
     }
-
-    // Función para manejar clics en el canvas
-    // canvas.addEventListener('click', (event) => {
-    //   const { offsetX, offsetY } = event;
-    //   colocarSpriteEnAreaCercana(offsetX, offsetY);
-    // });
+    
     function calcularSpriteAreaXY (x, y) {
       const puntosCercanos = puntos
         .map(punto => ({
@@ -67,13 +62,7 @@ function inicializarCanvas(){
         const xMax = Math.max(...puntosCercanos.map(p => p.x));
         const yMin = Math.min(...puntosCercanos.map(p => p.y));
         const yMax = Math.max(...puntosCercanos.map(p => p.y));
-
-        // spritePos = {
-        //   x: xMin + (xMax - xMin) / 2 - 15, // Ajuste para centrar el sprite
-        //   y: yMin + (yMax - yMin) / 2 - 15,
-        //   columna: parseInt((xMin + (xMax - xMin) / 2 - 15) / separacion, 10),
-        //   fila: parseInt((yMin + (yMax - yMin) / 2 - 15) / separacion, 10),
-        // };
+        
         spriteArea = puntosCercanos; // Guardar área del sprite
         // Aquí dibuja el rectángulo delimitador
         ctx.beginPath();
@@ -128,7 +117,6 @@ function inicializarCanvas(){
       if (spritePos) {
         calcularSpriteAreaXY(spritePos.x, spritePos.y);
         const currentArea = spriteArea;
-        //console.log("Init move sprite x: " + spritePos.x + ' y: ' + spritePos.y + " Fila: " + spritePos.fila + " Columna: " + spritePos.columna);
         console.log("Current area: " 
           + currentArea[0].x + "|" + currentArea[0].y +".  "
           + currentArea[1].x + "|" + currentArea[1].y +".  "
@@ -207,9 +195,9 @@ function inicializarCanvas(){
           let offsetColumna = punto1.columna;
           for(let i = punto1.x; i < punto2.x; i = i + separacion)
           {
-            let puntoX = {x: i, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
+            const puntoX = {x: i, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
             offsetColumna = offsetColumna + 1;
-            let puntoY = {x: i + separacion, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
+            const puntoY = {x: i + separacion, y: punto1.y, fila:punto1.fila, columna: offsetColumna };
             lineas.push({ p1: puntoX, p2: puntoY });
             dibujarLinea(puntoX, puntoY);
           }
@@ -220,9 +208,9 @@ function inicializarCanvas(){
           let offsetColumna = punto2.columna;
           for(let i = punto2.x; i < punto1.x; i = i + separacion)
           {
-            let puntoX = {x: i, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
+            const puntoX = {x: i, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
             offsetColumna = offsetColumna + 1;
-            let puntoY = {x: i + separacion, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
+            const puntoY = {x: i + separacion, y: punto2.y, fila:punto2.fila, columna: offsetColumna };
             lineas.push({ p1: puntoX, p2: puntoY });
             dibujarLinea(puntoX, puntoY);
           }
@@ -236,9 +224,9 @@ function inicializarCanvas(){
           let offsetFila = punto1.fila;
           for(let i = punto1.y; i < punto2.y; i = i + separacion)
           {
-            let puntoX = {x: punto1.x, y: i, fila:offsetFila, columna:  punto1.columna };
+            const puntoX = {x: punto1.x, y: i, fila:offsetFila, columna:  punto1.columna };
             offsetFila = offsetFila + 1;
-            let puntoY = {x: punto1.x, y: i + separacion, fila:offsetFila, columna: punto1.columna };
+            const puntoY = {x: punto1.x, y: i + separacion, fila:offsetFila, columna: punto1.columna };
             lineas.push({ p1: puntoX, p2: puntoY });
             dibujarLinea(puntoX, puntoY);
           }
@@ -249,9 +237,9 @@ function inicializarCanvas(){
           let offsetFila = punto2.fila;
           for(let i = punto2.y; i < punto1.y; i = i + separacion)
           {
-            let puntoX = {x: punto2.x, y: i, fila:offsetFila, columna:  punto2.columna };
+            const puntoX = {x: punto2.x, y: i, fila:offsetFila, columna:  punto2.columna };
             offsetFila = offsetFila + 1;
-            let puntoY = {x: punto2.x, y: i + separacion, fila:offsetFila, columna: punto2.columna };
+            const puntoY = {x: punto2.x, y: i + separacion, fila:offsetFila, columna: punto2.columna };
             lineas.push({ p1: puntoX, p2: puntoY });
             dibujarLinea(puntoX, puntoY);
           }
@@ -263,8 +251,8 @@ function inicializarCanvas(){
     function eliminarLinea(punto1, punto2) {
       // Filtrar la línea que queremos eliminar del array de líneas
       const nuevasLineas = lineas.filter(linea => 
-        !(linea.p1 === punto1 && linea.p2 === punto2) &&
-        !(linea.p1 === punto2 && linea.p2 === punto1)
+        !(compararPuntos(linea.p1, punto1) && compararPuntos(linea.p2, punto2)) &&
+        !(compararPuntos(linea.p1, punto2) && compararPuntos(linea.p2, punto1))
       );
       lineas.length = 0;
       lineas.push(...nuevasLineas);
@@ -290,6 +278,8 @@ function inicializarCanvas(){
       // Redibuja todos los puntos
       puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
 
+      //Poner Sprite
+      ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30);
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => dibujarLinea(linea.p1, linea.p2));
       console.log(lineas);
@@ -324,16 +314,22 @@ function inicializarCanvas(){
       }
     });
 
+    function compararPuntos (puntoA, puntoB) {
+      return puntoA.x === puntoB.x &&
+      puntoA.y === puntoB.y &&
+      puntoA.fila === puntoB.fila &&
+      puntoA.columna === puntoB.columna;
+    }
     // Función para manejar la selección de puntos y dibujar/eliminar líneas
     function seleccionarPunto(punto) {
       if (!primerPunto) {
         primerPunto = punto;
         resaltarPunto(punto, '#e74c3c');
       } else {
-        if (estanEnLinea(primerPunto, punto)) {
+        if (estanEnLinea(primerPunto, punto)) {         
           const lineaExiste = lineas.some(linea => 
-            (linea.p1 === primerPunto && linea.p2 === punto) ||
-            (linea.p1 === punto && linea.p2 === primerPunto)
+            (compararPuntos(linea.p1, primerPunto) && compararPuntos(linea.p2, punto)) ||
+            (compararPuntos(linea.p1, punto) && compararPuntos(linea.p2, primerPunto))
           );
 
           if (lineaExiste) {
