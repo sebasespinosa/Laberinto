@@ -5,6 +5,8 @@ const lineas = [];
 const filas = 5;
 const columnas = 10;
 const separacion = 60;
+const FORBIDDEN_MOVES = new Set();
+let siEntraPuente = false;
 const sprite = new Image(); // Objeto de imagen para el sprite
 sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
 let spritePos = null; // Posición actual del sprite
@@ -117,6 +119,7 @@ function inicializarCanvas(){
       if (spritePos) {
         calcularSpriteAreaXY(spritePos.x, spritePos.y);
         const currentArea = spriteArea;
+        
         console.log("Current area: " 
           + currentArea[0].x + "|" + currentArea[0].y +".  "
           + currentArea[1].x + "|" + currentArea[1].y +".  "
@@ -125,18 +128,85 @@ function inicializarCanvas(){
           );
         var lineasDetectadas = detectarLineasCurrentArea(lineas, currentArea);
         console.log("La posición actual tiene una línea? " + lineasDetectadas.length);
-        
+        console.log(lineasDetectadas);
         // Mover el sprite en la dirección deseada        
-        if (direccion === 'up' && spritePos.fila > 0 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
+        if (direccion === 'up' && spritePos.fila > 0 
+          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
+          && !FORBIDDEN_MOVES.has(direccion)) {
+          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial))
+          {
+            if(!siEntraPuente){
+              //entra al puente
+              FORBIDDEN_MOVES.add('left');
+              FORBIDDEN_MOVES.add('right');  
+              siEntraPuente = true;  
+            }  
+            else {
+              //sale al puente
+              FORBIDDEN_MOVES.clear();
+              siEntraPuente = false;
+            }     
+          }
           spritePos.y -= separacion; // Mover hacia arriba
           spritePos.fila--;
-        } else if (direccion === 'down' && spritePos.fila < filas - 2 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
+        } else if (direccion === 'down' && spritePos.fila < filas - 2 
+          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
+          && !FORBIDDEN_MOVES.has(direccion)) {
+          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial))
+          {
+            if(!siEntraPuente){
+              //entra al puente
+              FORBIDDEN_MOVES.add('left');
+              FORBIDDEN_MOVES.add('right');  
+              siEntraPuente = true;  
+            }  
+            else {
+              //sale al puente
+              FORBIDDEN_MOVES.clear();
+              siEntraPuente = false;
+            }                
+          }
           spritePos.y += separacion; // Mover hacia abajo
           spritePos.fila++;        
-        } else if (direccion === 'left' && spritePos.columna > 0 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
+        } else if (direccion === 'left' && spritePos.columna > 0 
+          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
+          && !FORBIDDEN_MOVES.has(direccion)) {
+          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial)
+            && lineasDetectadas.filter(x => x.especial).length < 2
+            )
+          {
+            if(!siEntraPuente){
+              //entra al puente
+              FORBIDDEN_MOVES.add('up');
+              FORBIDDEN_MOVES.add('down');  
+              siEntraPuente = true;  
+            }  
+            else {
+              //sale al puente
+              FORBIDDEN_MOVES.clear();
+              siEntraPuente = false;
+            }   
+                      
+          }
           spritePos.x -= separacion; // Mover hacia la izquierda
-          spritePos.columna--;
-        } else if (direccion === 'right' && spritePos.columna < columnas - 2 && !lineasDetectadas.some(x => x.orientacion === direccion)) {
+          spritePos.columna--;  
+        } else if (direccion === 'right' && spritePos.columna < columnas - 2 
+          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
+          && !FORBIDDEN_MOVES.has(direccion)) {
+          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial))
+          {
+            if(!siEntraPuente){
+              //entra al puente
+              FORBIDDEN_MOVES.add('up');
+              FORBIDDEN_MOVES.add('down');  
+              siEntraPuente = true;  
+            }  
+            else {
+              //sale al puente
+              FORBIDDEN_MOVES.clear();
+              siEntraPuente = false;
+            }            
+          }
           spritePos.x += separacion; // Mover hacia la derecha
           spritePos.columna++;
         }
@@ -146,6 +216,7 @@ function inicializarCanvas(){
         redibujarPuntos(); // Redibujar los puntos
         ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición
         redibujarLineas();
+        resaltarLineas();
       }
     }
 
@@ -281,8 +352,10 @@ function inicializarCanvas(){
       //Poner Sprite
       ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30);
       // Redibuja todas las líneas restantes
-      lineas.forEach(linea => dibujarLinea(linea.p1, linea.p2));
-      console.log(lineas);
+      lineas.forEach(linea => 
+        dibujarLinea(linea.p1, linea.p2)        
+      );
+      resaltarLineas();
     }
     // Agrega ciertas líneas por defecto
     function agregarLineasDefecto()
@@ -295,6 +368,11 @@ function inicializarCanvas(){
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => dibujarLinea(linea.p1, linea.p2));
       
+    }
+    function resaltarLineas(){
+      var lineasResaltadas = lineas.filter(linea => 
+      linea.especial === true);
+      lineasResaltadas.forEach(linea => resaltarLinea(linea.p1, linea.p2));
     }
     // Función para manejar eventos de teclado
     window.addEventListener('keydown', (event) => {
@@ -342,7 +420,7 @@ function inicializarCanvas(){
         primerPunto = null;
       }
     }
-
+    
     // Función para resaltar un punto
     function resaltarPunto(punto, color) {
       ctx.beginPath();
@@ -352,18 +430,107 @@ function inicializarCanvas(){
       ctx.closePath();
     }
 
+    function seleccionarLinea (linea){
+      if(linea.especial){
+        linea.especial = false;
+        noResaltarLinea(linea.p1, linea.p2);
+      }
+      else{ 
+        linea.especial = true;
+        resaltarLinea(linea.p1, linea.p2);
+      }
+    }
+    function noResaltarLinea(punto1, punto2) {
+      ctx.beginPath();
+      ctx.moveTo(punto1.x, punto1.y);
+      ctx.lineTo(punto2.x, punto2.y);
+      ctx.strokeStyle = '#3498db';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+    }
+    function resaltarLinea(punto1, punto2) {
+      ctx.beginPath();
+      ctx.moveTo(punto1.x, punto1.y);
+      ctx.lineTo(punto2.x, punto2.y);
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+      //Detectar si hay otra línea resaltada para que se pueda crear el puente.
+      //Si los dos puntos forman una línea
+      if(punto1.fila === punto2.fila)
+      {
+        //detectar si hay una línea especial en la fila anterior para la posición
+        //detectar si hay una línea especial en la fila posterior para la posición
+        if((lineas.some(x => x.fila === punto1.fila - 1 
+          && x.p1.columna === punto1.columna
+          && x.p2.columna === punto2.columna)) ||
+          (lineas.some(x => x.fila === punto1.fila + 1
+            && x.p1.columna === punto1.columna
+            && x.p2.columna === punto2.columna)))
+        {
+
+        }
+      }
+    }
     // Función para verificar si dos puntos están en la misma fila o columna
     function estanEnLinea(punto1, punto2) {
       return punto1.fila === punto2.fila || punto1.columna === punto2.columna;
     }
 
+    function distanciaPuntoALinea(px, py, linea) {
+      const { x: x1, y: y1 } = linea.p1;
+      const { x: x2, y: y2 } = linea.p2;
+    
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+    
+      const longitudCuadrado = dx * dx + dy * dy;
+      let t = ((px - x1) * dx + (py - y1) * dy) / longitudCuadrado;
+    
+      // Limita t al rango [0, 1] para que quede dentro del segmento
+      t = Math.max(0, Math.min(1, t));
+    
+      // Encuentra el punto más cercano en el segmento
+      const cercanoX = x1 + t * dx;
+      const cercanoY = y1 + t * dy;
+    
+      // Calcula la distancia desde el punto del clic hasta el punto más cercano
+      return Math.hypot(px - cercanoX, py - cercanoY);
+    }
+    function distanciaPuntoAPunto(px, py, qx, qy) {
+      return Math.hypot(px - qx, py - qy);
+    }
+    
+    function puntoMedio(linea) {
+      const medioX = (linea.p1.x + linea.p2.x) / 2;
+      const medioY = (linea.p1.y + linea.p2.y) / 2;
+      return { x: medioX, y: medioY };
+    }
     // Función para manejar clics en el canvas
     canvas.addEventListener('click', (event) => {
+      const umbral = 5; // Máxima distancia permitida en píxeles
       const { offsetX, offsetY } = event;
       const puntoCercano = puntos.find(punto => 
         Math.hypot(punto.x - offsetX, punto.y - offsetY) < 10
       );
+      const lineaCercana = lineas.reduce((lineaMasCercana, lineaActual) => {
+        const { x: medioX, y: medioY } = puntoMedio(lineaActual);
+        const distanciaActual = distanciaPuntoAPunto(offsetX, offsetY, medioX, medioY);
+        
+        if (distanciaActual <= umbral && distanciaActual < lineaMasCercana.distancia) {
+          return { linea: lineaActual, distancia: distanciaActual };
+        }
+        return lineaMasCercana;
+      }, { linea: null, distancia: Infinity });
       if (puntoCercano) seleccionarPunto(puntoCercano);
+      if (lineaCercana.linea) {
+        //console.log("Línea más cercana:", lineaCercana.linea);
+        seleccionarLinea(lineaCercana.linea);
+      } else {
+        //console.log("No hay una línea cercana dentro del umbral de distancia.");
+      }
     });
     
   
