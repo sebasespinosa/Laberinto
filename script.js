@@ -2,11 +2,13 @@ const canvas = document.getElementById('miCanvas');
 const ctx = canvas.getContext('2d');
 const puntos = [];
 const lineas = [];
+const puentes = new Set();
 const filas = 5;
 const columnas = 10;
 const separacion = 60;
 const FORBIDDEN_MOVES = new Set();
 let siEntraPuente = false;
+let siBajaPuente = false;
 const sprite = new Image(); // Objeto de imagen para el sprite
 sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
 let spritePos = null; // Posición actual del sprite
@@ -49,7 +51,16 @@ function inicializarCanvas(){
       ctx.fill();
       ctx.closePath();
     }
-    
+    function calcularPuntosAreaXY (x, y) {
+      return puntos
+        .map(punto => ({
+          punto,
+          distancia: Math.hypot(punto.x - x, punto.y - y),
+        }))
+        .sort((a, b) => a.distancia - b.distancia)
+        .slice(0, 4) // Obtener los cuatro más cercanos
+        .map(item => item.punto);
+    }
     function calcularSpriteAreaXY (x, y) {
       const puntosCercanos = puntos
         .map(punto => ({
@@ -129,6 +140,9 @@ function inicializarCanvas(){
         var lineasDetectadas = detectarLineasCurrentArea(lineas, currentArea);
         console.log("La posición actual tiene una línea? " + lineasDetectadas.length);
         console.log(lineasDetectadas);
+        console.info("Si entra a puente: " + siEntraPuente);
+        console.info("Si pasa bajo puente: " + siBajaPuente);
+        console.info("Coordenada de puentes: " + puentes);
         // Mover el sprite en la dirección deseada        
         if (direccion === 'up' && spritePos.fila > 0 
           && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
@@ -146,6 +160,21 @@ function inicializarCanvas(){
               FORBIDDEN_MOVES.clear();
               siEntraPuente = false;
             }     
+          }
+          //Calcular para cuándo pase debajo del puente
+          //Calcular puntos del área a la cuál se va a desplazar
+          let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x, spritePos.y - separacion);
+          for(const puente of puentes)
+          {            
+            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            {
+              FORBIDDEN_MOVES.add('left');
+              FORBIDDEN_MOVES.add('right');
+              siBajaPuente = true; 
+              break;             
+            }
+            FORBIDDEN_MOVES.clear();
+            siBajaPuente = false;
           }
           spritePos.y -= separacion; // Mover hacia arriba
           spritePos.fila--;
@@ -166,31 +195,24 @@ function inicializarCanvas(){
               siEntraPuente = false;
             }                
           }
+          //Calcular para cuándo pase debajo del puente
+          //Calcular puntos del área a la cuál se va a desplazar
+          let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x, spritePos.y + separacion);
+          for(const puente of puentes)
+          {            
+            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            {
+              FORBIDDEN_MOVES.add('left');
+              FORBIDDEN_MOVES.add('right');
+              siBajaPuente = true; 
+              break;             
+            }
+            FORBIDDEN_MOVES.clear();
+            siBajaPuente = false;
+          }
           spritePos.y += separacion; // Mover hacia abajo
           spritePos.fila++;        
         } else if (direccion === 'left' && spritePos.columna > 0 
-          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
-          && !FORBIDDEN_MOVES.has(direccion)) {
-          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial)
-            && lineasDetectadas.filter(x => x.especial).length < 2
-            )
-          {
-            if(!siEntraPuente){
-              //entra al puente
-              FORBIDDEN_MOVES.add('up');
-              FORBIDDEN_MOVES.add('down');  
-              siEntraPuente = true;  
-            }  
-            else {
-              //sale al puente
-              FORBIDDEN_MOVES.clear();
-              siEntraPuente = false;
-            }   
-                      
-          }
-          spritePos.x -= separacion; // Mover hacia la izquierda
-          spritePos.columna--;  
-        } else if (direccion === 'right' && spritePos.columna < columnas - 2 
           && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
           && !FORBIDDEN_MOVES.has(direccion)) {
           if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial))
@@ -205,7 +227,57 @@ function inicializarCanvas(){
               //sale al puente
               FORBIDDEN_MOVES.clear();
               siEntraPuente = false;
+            }         
+          }
+          //Calcular para cuándo pase debajo del puente
+          //Calcular puntos del área a la cuál se va a desplazar
+          let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x - separacion, spritePos.y);
+          for(const puente of puentes)
+          {            
+            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            {
+              FORBIDDEN_MOVES.add('up');
+              FORBIDDEN_MOVES.add('down');
+              siBajaPuente = true; 
+              break;             
+            }
+            FORBIDDEN_MOVES.clear();
+            siBajaPuente = false;
+          }
+          spritePos.x -= separacion; // Mover hacia la izquierda
+          spritePos.columna--;  
+        } else if (direccion === 'right' && spritePos.columna < columnas - 2 
+          && !lineasDetectadas.some(x => x.orientacion === direccion && !x.especial)
+          && !FORBIDDEN_MOVES.has(direccion)) {
+          //Calcular para cuándo pase sobre el puente
+          if(lineasDetectadas.some(x => x.orientacion === direccion && x.especial))
+          {
+            if(!siEntraPuente){
+              //entra al puente
+              FORBIDDEN_MOVES.add('up');
+              FORBIDDEN_MOVES.add('down');  
+              siEntraPuente = true;  
+            }  
+            else {
+              //sale al puente
+              FORBIDDEN_MOVES.clear();
+              siEntraPuente = false;
             }            
+          }
+          //Calcular para cuándo pase debajo del puente
+          //Calcular puntos del área a la cuál se va a desplazar
+          let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x + separacion, spritePos.y);
+          for(const puente of puentes)
+          {            
+            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            {
+              FORBIDDEN_MOVES.add('up');
+              FORBIDDEN_MOVES.add('down');
+              siBajaPuente = true; 
+              break;             
+            }
+            FORBIDDEN_MOVES.clear();
+            siBajaPuente = false;
           }
           spritePos.x += separacion; // Mover hacia la derecha
           spritePos.columna++;
@@ -218,6 +290,23 @@ function inicializarCanvas(){
         redibujarLineas();
         resaltarLineas();
       }
+    }
+
+    function sonIguales(array1, array2) {
+      // Si la longitud de los arreglos es diferente, no son iguales
+      if (array1.length !== array2.length) {
+        return false;
+      }
+    
+      // Creamos una función para comparar sólo `x` e `y` de los objetos
+      function comparador(objA, objB) {
+        return objA.x === objB.x && objA.y === objB.y;
+      }
+    
+      // Validamos que cada objeto en array1 tenga su equivalente en array2
+      return array1.every(obj1 =>
+        array2.some(obj2 => comparador(obj1, obj2))
+      );
     }
 
     function detectarLineasCurrentArea(arregloPrincipal, objetoFiltro) {
@@ -326,6 +415,7 @@ function inicializarCanvas(){
         !(compararPuntos(linea.p1, punto2) && compararPuntos(linea.p2, punto1))
       );
       lineas.length = 0;
+      puentes.clear();
       lineas.push(...nuevasLineas);
       redibujarCanvas();
     }
@@ -463,16 +553,79 @@ function inicializarCanvas(){
       {
         //detectar si hay una línea especial en la fila anterior para la posición
         //detectar si hay una línea especial en la fila posterior para la posición
-        if((lineas.some(x => x.fila === punto1.fila - 1 
-          && x.p1.columna === punto1.columna
-          && x.p2.columna === punto2.columna)) ||
-          (lineas.some(x => x.fila === punto1.fila + 1
-            && x.p1.columna === punto1.columna
-            && x.p2.columna === punto2.columna)))
+        var lineasFiltradas = lineas.filter(x => 
+          (x.p1.fila === punto1.fila - 1 || x.p1.fila === punto1.fila + 1) &&
+          x.p1.columna === punto1.columna &&
+          x.p2.columna === punto2.columna &&
+          x.especial
+        );
+        if(lineasFiltradas.length > 0)
         {
-
+          lineasFiltradas.forEach(function(linea) { 
+            //almacenar área circundante por cada linea filtrada.. TO FO
+            ctx.beginPath();
+            ctx.rect(punto1.x, punto1.y, linea.p2.x - punto1.x, linea.p2.y - punto1.y);
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.2)'; // Color del borde            
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.closePath();
+            let puntos = [
+              { x: punto1.x, y: punto1.y },
+              { x: punto2.x, y: punto2.y },
+              { x: linea.p1.x, y: linea.p1.y },
+              { x: linea.p2.x, y: linea.p2.y }
+            ];
+            let clave = crearClavePuntos(puntos);
+            if (!puentes.has(clave)) {
+              // Si no existe, agregar la clave al Set
+              puentes.add(clave);
+            }
+          });
         }
       }
+      //Detectar si hay otra línea resaltada para que se pueda crear el puente.
+      //Si los dos puntos forman una columna
+      if(punto1.columna === punto2.columna)
+        {
+          //detectar si hay una línea especial en la columna anterior para la posición
+          //detectar si hay una línea especial en la columna posterior para la posición
+          var lineasFiltradas = lineas.filter(x => 
+            (x.p1.columna === punto1.columna - 1 || x.p1.columna === punto1.columna + 1) &&
+            x.p1.fila === punto1.fila &&
+            x.p2.fila === punto2.fila &&
+            x.especial
+          );
+          if(lineasFiltradas.length > 0)
+          {
+            lineasFiltradas.forEach(function(linea) { 
+              //almacenar área circundante por cada linea filtrada.. TO FO
+              ctx.beginPath();
+              ctx.rect(punto1.x, punto1.y, linea.p2.x - punto1.x, linea.p2.y - punto1.y);
+              ctx.strokeStyle = 'rgba(255, 0, 0, 0.2)'; // Color del borde            
+              ctx.lineWidth = 5;
+              ctx.stroke();
+              ctx.closePath();
+              let puntos = [
+                { x: punto1.x, y: punto1.y },
+                { x: punto2.x, y: punto2.y },
+                { x: linea.p1.x, y: linea.p1.y },
+                { x: linea.p2.x, y: linea.p2.y }
+              ];
+              let clave = crearClavePuntos(puntos);
+              if (!puentes.has(clave)) {
+                // Si no existe, agregar la clave al Set
+                puentes.add(clave);
+              }
+            });
+          }
+        }
+    }
+    function crearClavePuntos(puntos) {
+      // Ordena los puntos en el array de manera consistente
+      puntos.sort((a, b) => a.x - b.x || a.y - b.y);
+      
+      // Convierte el array ordenado a una cadena JSON
+      return JSON.stringify(puntos);
     }
     // Función para verificar si dos puntos están en la misma fila o columna
     function estanEnLinea(punto1, punto2) {
