@@ -584,7 +584,9 @@ function inicializarCanvas(){
               // Si no existe, agregar la clave al Set
               puentes.add(clave);
             }
-            ctx.drawImage(bridgeSpriteRotated, punto1.x, punto1.y, 60, 60);
+            ctx.drawImage(bridgeSpriteRotated, 
+              Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
+              Math.min(punto1.y,punto2.y,linea.p1.y,linea.p2.y), 60, 60);
           });
         }
       }
@@ -621,7 +623,9 @@ function inicializarCanvas(){
                 // Si no existe, agregar la clave al Set
                 puentes.add(clave);
               }
-              ctx.drawImage(bridgeSprite, punto1.x, punto1.y, 60, 60);
+              ctx.drawImage(bridgeSprite, 
+                Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
+                Math.min(punto1.y,punto2.y,linea.p1.y,linea.p2.y), 60, 60);
             });
           }
         }
