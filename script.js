@@ -11,6 +11,10 @@ let siEntraPuente = false;
 let siBajaPuente = false;
 const sprite = new Image(); // Objeto de imagen para el sprite
 sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
+const bridgeSprite = new Image();
+bridgeSprite.src = 'woodenBridge60.png'
+const bridgeSpriteRotated = new Image();
+bridgeSpriteRotated.src = 'woodenBridge60Rotated.png'
 let spritePos = null; // Posición actual del sprite
 let spriteArea = null; // Área delimitada por los cuatro puntos cercanos
 let primerPunto = null;
@@ -580,6 +584,9 @@ function inicializarCanvas(){
               // Si no existe, agregar la clave al Set
               puentes.add(clave);
             }
+            ctx.drawImage(bridgeSpriteRotated, 
+              Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
+              Math.min(punto1.y,punto2.y,linea.p1.y,linea.p2.y), 60, 60);
           });
         }
       }
@@ -616,6 +623,9 @@ function inicializarCanvas(){
                 // Si no existe, agregar la clave al Set
                 puentes.add(clave);
               }
+              ctx.drawImage(bridgeSprite, 
+                Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
+                Math.min(punto1.y,punto2.y,linea.p1.y,linea.p2.y), 60, 60);
             });
           }
         }
