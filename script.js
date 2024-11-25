@@ -10,7 +10,7 @@ const FORBIDDEN_MOVES = new Set();
 let siEntraPuente = false;
 let siBajaPuente = false;
 const sprite = new Image(); // Objeto de imagen para el sprite
-sprite.src = 'sprite.png'; // URL de un sprite de ejemplo
+sprite.src = 'sprite2.png'; // URL de un sprite de ejemplo
 const bridgeSprite = new Image();
 bridgeSprite.src = 'woodenBridge60.png'
 const bridgeSpriteRotated = new Image();
@@ -174,7 +174,10 @@ function inicializarCanvas(){
             {
               FORBIDDEN_MOVES.add('left');
               FORBIDDEN_MOVES.add('right');
-              siBajaPuente = true; 
+              var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
+              //Con el par de puntos coincidentes, verificar si no es una línea especial
+              var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
+              siBajaPuente = lineasCoincidentes.length === 0; 
               break;             
             }
             FORBIDDEN_MOVES.clear();
@@ -208,7 +211,11 @@ function inicializarCanvas(){
             {
               FORBIDDEN_MOVES.add('left');
               FORBIDDEN_MOVES.add('right');
-              siBajaPuente = true; 
+              var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
+              //Con el par de puntos coincidentes, verificar si no es una línea especial
+              var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
+              siBajaPuente = lineasCoincidentes.length === 0; 
+              
               break;             
             }
             FORBIDDEN_MOVES.clear();
@@ -242,7 +249,11 @@ function inicializarCanvas(){
             {
               FORBIDDEN_MOVES.add('up');
               FORBIDDEN_MOVES.add('down');
-              siBajaPuente = true; 
+              var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
+              //Con el par de puntos coincidentes, verificar si no es una línea especial
+              var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
+              siBajaPuente = lineasCoincidentes.length === 0; 
+              
               break;             
             }
             FORBIDDEN_MOVES.clear();
@@ -277,7 +288,11 @@ function inicializarCanvas(){
             {
               FORBIDDEN_MOVES.add('up');
               FORBIDDEN_MOVES.add('down');
-              siBajaPuente = true; 
+              var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
+              //Con el par de puntos coincidentes, verificar si no es una línea especial
+              var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
+              siBajaPuente = lineasCoincidentes.length === 0; 
+               
               break;             
             }
             FORBIDDEN_MOVES.clear();
@@ -290,10 +305,41 @@ function inicializarCanvas(){
         // Redibujar el canvas y el sprite en la nueva posición
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
         redibujarPuntos(); // Redibujar los puntos
-        ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición
         redibujarLineas();
-        resaltarLineas();
+        if(siBajaPuente){
+          
+          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+          resaltarLineas();     
+        }
+        else {  
+          resaltarLineas(); 
+          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+           
+        }        
       }
+    }
+
+    function encontrarCoincidencias(arr1, arr2) {
+      // Filtra los elementos en arr1 que tengan coincidencias en arr2
+      return arr1.filter(item1 =>
+        arr2.some(item2 => item1.x === item2.x && item1.y === item2.y)
+      );
+    }
+
+    function encontrarLineasCoincidentes(puntos, lineas) {
+      return lineas.filter(linea =>
+        linea.especial && 
+        puntos.some(punto1 =>
+          puntos.some(punto2 =>
+            (
+              (punto1.x === linea.p1.x && punto1.y === linea.p1.y &&
+               punto2.x === linea.p2.x && punto2.y === linea.p2.y) ||
+              (punto1.x === linea.p2.x && punto1.y === linea.p2.y &&
+               punto2.x === linea.p1.x && punto2.y === linea.p1.y)
+            )
+          )
+        )
+      );
     }
 
     function sonIguales(array1, array2) {
