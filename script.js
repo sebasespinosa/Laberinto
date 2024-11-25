@@ -126,7 +126,7 @@ function inicializarCanvas(){
       spriteArea = puntosCercanos; // Guardar área del sprite
       //console.log("Ubicando sprite x: " + spritePos.x + ' y: ' + spritePos.y);
       // Dibujar el sprite en la nueva posición
-      ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite
+      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite
     }
 
     // Función para mover el sprite
@@ -308,12 +308,12 @@ function inicializarCanvas(){
         redibujarLineas();
         if(siBajaPuente){
           
-          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
           resaltarLineas();     
         }
         else {  
           resaltarLineas(); 
-          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
            
         }        
       }
@@ -490,7 +490,7 @@ function inicializarCanvas(){
       puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
 
       //Poner Sprite
-      ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30);
+      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40);
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => 
         dibujarLinea(linea.p1, linea.p2)        
