@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclado en Cruz</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .arrow-controls {
+      display: grid;
+      grid-template-rows: repeat(3, 60px);
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+    }
+
+    .arrow-controls button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Ocultar botones centrales */
+    .arrow-controls button.blank {
+      background-color: transparent;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .arrow-controls button:active {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="arrow-controls">
+    <!-- Fila superior -->
+    <button class="blank"></button>
+    <button id="up" title="Flecha Arriba">⬆️</button>
+    <button class="blank"></button>
+    <!-- Fila central -->
+    <button id="left" title="Flecha Izquierda">⬅️</button>
+    <button class="blank"></button>
+    <button id="right" title="Flecha Derecha">➡️</button>
+    <!-- Fila inferior -->
+    <button class="blank"></button>
+    <button id="down" title="Flecha Abajo">⬇️</button>
+    <button class="blank"></button>
+  </div>
+
+  <script>
+    // Añadir eventos a los botones
+    const actions = {
+      up: () => alert('Flecha hacia arriba presionada'),
+      down: () => alert('Flecha hacia abajo presionada'),
+      left: () => alert('Flecha hacia la izquierda presionada'),
+      right: () => alert('Flecha hacia la derecha presionada'),
+    };
+
+    document.getElementById('up').addEventListener('click', actions.up);
+    document.getElementById('down').addEventListener('click', actions.down);
+    document.getElementById('left').addEventListener('click', actions.left);
+    document.getElementById('right').addEventListener('click', actions.right);
+  </script>
+</body>
+</html>
