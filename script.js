@@ -2,7 +2,7 @@ const canvas = document.getElementById('miCanvas');
 const ctx = canvas.getContext('2d');
 const puntos = [];
 const lineas = [];
-const puentes = new Set();
+const puentes = new Map();
 const filas = 5;
 const columnas = 10;
 const separacion = 60;
@@ -126,7 +126,7 @@ function inicializarCanvas(){
       spriteArea = puntosCercanos; // Guardar área del sprite
       //console.log("Ubicando sprite x: " + spritePos.x + ' y: ' + spritePos.y);
       // Dibujar el sprite en la nueva posición
-      ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite
+      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite
     }
 
     // Función para mover el sprite
@@ -170,14 +170,14 @@ function inicializarCanvas(){
           let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x, spritePos.y - separacion);
           for(const puente of puentes)
           {            
-            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            if(sonIguales(JSON.parse(puente[1].ubicacion), puntosAreaFutura))
             {
               FORBIDDEN_MOVES.add('left');
               FORBIDDEN_MOVES.add('right');
               var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
               //Con el par de puntos coincidentes, verificar si no es una línea especial
               var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
-              siBajaPuente = lineasCoincidentes.length === 0; 
+              siBajaPuente = lineasCoincidentes.length === 0 || puente[1].orientacion === "horizontal";; 
               break;             
             }
             FORBIDDEN_MOVES.clear();
@@ -207,14 +207,14 @@ function inicializarCanvas(){
           let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x, spritePos.y + separacion);
           for(const puente of puentes)
           {            
-            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            if(sonIguales(JSON.parse(puente[1].ubicacion), puntosAreaFutura))
             {
               FORBIDDEN_MOVES.add('left');
               FORBIDDEN_MOVES.add('right');
               var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
               //Con el par de puntos coincidentes, verificar si no es una línea especial
               var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
-              siBajaPuente = lineasCoincidentes.length === 0; 
+              siBajaPuente = lineasCoincidentes.length === 0 || puente[1].orientacion === "horizontal";; 
               
               break;             
             }
@@ -245,14 +245,14 @@ function inicializarCanvas(){
           let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x - separacion, spritePos.y);
           for(const puente of puentes)
           {            
-            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            if(sonIguales(JSON.parse(puente[1].ubicacion), puntosAreaFutura))
             {
               FORBIDDEN_MOVES.add('up');
               FORBIDDEN_MOVES.add('down');
               var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
               //Con el par de puntos coincidentes, verificar si no es una línea especial
               var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
-              siBajaPuente = lineasCoincidentes.length === 0; 
+              siBajaPuente = lineasCoincidentes.length === 0 || puente[1].orientacion === "vertical";; 
               
               break;             
             }
@@ -284,14 +284,14 @@ function inicializarCanvas(){
           let puntosAreaFutura = calcularPuntosAreaXY(spritePos.x + separacion, spritePos.y);
           for(const puente of puentes)
           {            
-            if(sonIguales(JSON.parse(puente), puntosAreaFutura))
+            if(sonIguales(JSON.parse(puente[1].ubicacion), puntosAreaFutura))
             {
               FORBIDDEN_MOVES.add('up');
               FORBIDDEN_MOVES.add('down');
               var coincidencias = encontrarCoincidencias(currentArea, puntosAreaFutura);
               //Con el par de puntos coincidentes, verificar si no es una línea especial
               var lineasCoincidentes = encontrarLineasCoincidentes(coincidencias, lineas);
-              siBajaPuente = lineasCoincidentes.length === 0; 
+              siBajaPuente = lineasCoincidentes.length === 0 || puente[1].orientacion === "vertical"; 
                
               break;             
             }
@@ -308,12 +308,12 @@ function inicializarCanvas(){
         redibujarLineas();
         if(siBajaPuente){
           
-          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
           resaltarLineas();     
         }
         else {  
           resaltarLineas(); 
-          ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
            
         }        
       }
@@ -490,7 +490,7 @@ function inicializarCanvas(){
       puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
 
       //Poner Sprite
-      ctx.drawImage(sprite, spritePos.x, spritePos.y, 30, 30);
+      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40);
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => 
         dibujarLinea(linea.p1, linea.p2)        
@@ -626,9 +626,13 @@ function inicializarCanvas(){
               { x: linea.p2.x, y: linea.p2.y }
             ];
             let clave = crearClavePuntos(puntos);
-            if (!puentes.has(clave)) {
+            const identificador = `${clave}|vertical`;
+            if (!puentes.has(identificador)) {
               // Si no existe, agregar la clave al Set
-              puentes.add(clave);
+              puentes.set(identificador, {
+                ubicacion: clave,
+                orientacion: "vertical"
+              });
             }
             ctx.drawImage(bridgeSpriteRotated, 
               Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
@@ -665,9 +669,13 @@ function inicializarCanvas(){
                 { x: linea.p2.x, y: linea.p2.y }
               ];
               let clave = crearClavePuntos(puntos);
-              if (!puentes.has(clave)) {
+              const identificador = `${clave}|horizontal`;
+              if (!puentes.has(identificador)) {
                 // Si no existe, agregar la clave al Set
-                puentes.add(clave);
+                puentes.set(identificador, {
+                  ubicacion: clave,
+                  orientacion: "horizontal"
+                });
               }
               ctx.drawImage(bridgeSprite, 
                 Math.min(punto1.x,punto2.x,linea.p1.x,linea.p2.x), 
