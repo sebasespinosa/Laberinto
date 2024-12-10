@@ -1,10 +1,10 @@
 const canvas = document.getElementById('miCanvas');
 const ctx = canvas.getContext('2d');
 const puntos = [];
-const lineas = [];
+let lineas = [];
 const puentes = new Map();
-const filas = 5;
-const columnas = 10;
+const filas = 8;
+const columnas = 8;
 const separacion = 60;
 const FORBIDDEN_MOVES = new Set();
 let siEntraPuente = false;
@@ -18,6 +18,121 @@ bridgeSpriteRotated.src = 'woodenBridge60Rotated.png'
 let spritePos = null; // Posición actual del sprite
 let spriteArea = null; // Área delimitada por los cuatro puntos cercanos
 let primerPunto = null;
+const stageZubSero = [
+    ['.', '-', '.', '-', '.', '-', '.'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['.', ' ', '.', '*', '.', ' ', '.'],
+    ['*', ' ', '*', ' ', ' ', ' ', '|'],
+    ['.', ' ', '.', '*', '.', ' ', '.'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['.', '-', '.', '-', '.', '-', '.']
+];
+const stageZero = [
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', '*', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', '*', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.']
+];
+const stageOne = [
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '-', '.', '-', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', '|', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '-', '.', '*', '.', '-', '.'],
+  ['|', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '-', '.', '*', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', '|', ' ', '|', ' ', '|', ' ', ' ', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '-', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.']
+];
+const parseMapToLines = (mapa, puntos) => {
+  const lineas = [];
+
+  const getPoint = (fila, columna) => {
+    return puntos.find(p => p.fila === fila && p.columna === columna);
+  };
+
+  const isLineDuplicate = (p1, p2) => {
+    return lineas.some(line => 
+      (line.p1 === p1 && line.p2 === p2) || 
+      (line.p1 === p2 && line.p2 === p1)
+    );
+  };
+
+  mapa.forEach((row, i) => {
+    row.forEach((cell, j) => {
+      if (cell === '-' || cell === '|' || cell === '*') {
+        if (cell === '-') {
+          // Línea horizontal
+          const p1 = getPoint(Math.floor(i / 2), Math.floor((j - 1) / 2));
+          const p2 = getPoint(Math.floor(i / 2), Math.floor((j + 1) / 2));
+          if (p1 && p2 && !isLineDuplicate(p1, p2)) {
+            lineas.push({ p1, p2 });
+          }
+        } else if (cell === '|') {
+          // Línea vertical
+          const p1 = getPoint(Math.floor((i - 1) / 2), Math.floor(j / 2));
+          const p2 = getPoint(Math.floor((i + 1) / 2), Math.floor(j / 2));
+          if (p1 && p2 && !isLineDuplicate(p1, p2)) {
+            lineas.push({ p1, p2 });
+          }
+        } else if (cell === '*') {
+          // Coordenadas del punto central del muro especial
+        const fila = Math.floor(i / 2);
+        const columna = Math.floor(j / 2);
+
+        // Obtener los puntos adyacentes si existen
+        const leftPoint = j > 0 && mapa[i][j - 1] === '.' ? getPoint(fila, Math.floor((j - 1) / 2)) : null;
+        const rightPoint = j < row.length - 1 && mapa[i][j + 1] === '.' ? getPoint(fila, Math.floor((j + 1) / 2)) : null;
+        const topPoint = i > 0 && mapa[i - 1][j] === '.' ? getPoint(Math.floor((i - 1) / 2), columna) : null;
+        const bottomPoint = i < mapa.length - 1 && mapa[i + 1][j] === '.' ? getPoint(Math.floor((i + 1) / 2), columna) : null;
+
+        // Agregar líneas según las conexiones detectadas
+        if (leftPoint && rightPoint) {
+          // Conexión horizontal
+          lineas.push({ p1: leftPoint, p2: rightPoint, especial: true });
+        }
+        if (topPoint && bottomPoint) {
+          // Conexión vertical
+          lineas.push({ p1: topPoint, p2: bottomPoint, especial: true });
+        }
+        }
+      }
+    });
+  });
+
+  // Si no se alcanzan 32 líneas, se puede ajustar manualmente o revisar la entrada.
+  if (lineas.length !== 32) {
+    console.warn(`Se esperaban 32 líneas, pero se detectaron ${lineas.length}`);
+  }
+
+  return lineas;
+};
+
+function renderizarStage(stageData){
+  lineas = parseMapToLines(stageData, puntos);
+  // Redibuja todas las líneas 
+  lineas.forEach(linea => 
+    dibujarLinea(linea.p1, linea.p2)        
+  );
+  resaltarLineas();
+}
 function inicializarCanvas(){
 
     // Crear los puntos en el canvas
@@ -26,6 +141,7 @@ function inicializarCanvas(){
     //agregarLineasDefecto();
     // Ubicar el sprite en una posición determinada
     colocarSpriteEnAreaCercana(71, 59);
+    renderizarStage(stageOne);
 }
     
 
@@ -126,7 +242,7 @@ function inicializarCanvas(){
       spriteArea = puntosCercanos; // Guardar área del sprite
       //console.log("Ubicando sprite x: " + spritePos.x + ' y: ' + spritePos.y);
       // Dibujar el sprite en la nueva posición
-      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite
+      ctx.drawImage(sprite, spritePos.x, spritePos.y, 40, 40); // Dibujar el sprite
     }
 
     // Función para mover el sprite
@@ -308,12 +424,12 @@ function inicializarCanvas(){
         redibujarLineas();
         if(siBajaPuente){
           
-          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
           resaltarLineas();     
         }
         else {  
           resaltarLineas(); 
-          ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(sprite, spritePos.x, spritePos.y-10, 40, 40); // Dibujar el sprite en la nueva posición          
            
         }        
       }
@@ -490,7 +606,7 @@ function inicializarCanvas(){
       puntos.forEach(punto => dibujarPunto(punto.x, punto.y));
 
       //Poner Sprite
-      ctx.drawImage(sprite, spritePos.x-10, spritePos.y, 40, 40);
+      ctx.drawImage(sprite, spritePos.x, spritePos.y, 40, 40);
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => 
         dibujarLinea(linea.p1, linea.p2)        
