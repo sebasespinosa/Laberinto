@@ -133,15 +133,27 @@ function renderizarStage(stageData){
   );
   resaltarLineas();
 }
-function inicializarCanvas(){
+function inicializarCanvas(stage){
 
+    // Limpia el canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     // Crear los puntos en el canvas
-    crearPuntos();
+    if(puntos.length === 0){
+      crearPuntos();
+    }
+    else{
+      redibujarPuntos();
+    }
     // Agregar algunas líneas al momento de cargar la página
     //agregarLineasDefecto();
     // Ubicar el sprite en una posición determinada
     colocarSpriteEnAreaCercana(71, 59);
-    renderizarStage(stageOne);
+    if(stage === 'stageZero'){
+      renderizarStage(stageZero);
+    }
+    if(stage === 'stageOne'){
+      renderizarStage(stageOne);
+    }
 }
     
 
