@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laberinto de papel</title>
+  <style>
+    canvas {
+      border: 1px solid #ddd;
+      display: block;
+      margin: 20px auto;
+      background-color: #f7f7f7;
+    }
+  </style>
+  
+</head>
+<body>
+  <canvas id="miCanvas" width="600" height="500"></canvas>
+  <script src="script.js" defer></script>
+  
+  <div>
+    <button id="zero" title="Laberinto Cero">Cero</button>
+    <button id="one" title="Laberinto Uno">Uno</button>
+  </div>
+  <script>
+    // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
+    //window.addEventListener('load', function() {
+    //    inicializarCanvas('stageZero'); 
+    const stages = {
+      zero: () => {          
+          inicializarCanvas('stageZero');
+          },
+      one: () => {           
+          inicializarCanvas('stageOne');
+          }          
+      };
+    document.getElementById('zero').addEventListener('click', stages.zero);
+    document.getElementById('one').addEventListener('click', stages.one);
+    
+  </script>
+</body>
+</html>
