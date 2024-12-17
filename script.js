@@ -15,9 +15,20 @@ const bridgeSprite = new Image();
 bridgeSprite.src = 'woodenBridge60.png'
 const bridgeSpriteRotated = new Image();
 bridgeSpriteRotated.src = 'woodenBridge60Rotated.png'
+const unicorn = new Image();
+unicorn.src = 'unicornio.png'
 let spritePos = null; // Posición actual del sprite
+let unicornioPos = null;
 let spriteArea = null; // Área delimitada por los cuatro puntos cercanos
+let unicornioArea = null;
 let primerPunto = null;
+// Imagen de los corazones
+const heartImage = new Image();
+heartImage.src = 'corazon.png'; // Ruta de tu imagen
+// Configuración de los corazones
+let hearts = [];
+const heartCount = 10; // Número de corazones
+let animationId;
 const stageZubSero = [
     ['.', '-', '.', '-', '.', '-', '.'],
     ['|', ' ', ' ', ' ', ' ', ' ', '|'],
@@ -133,10 +144,53 @@ function renderizarStage(stageData){
   );
   resaltarLineas();
 }
+function initializeHearts() {
+  hearts = []; // Vaciar lista de corazones
+  for (let i = 0; i < heartCount; i++) {
+    hearts.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 100,
+      speed: 1 + Math.random() * 2,
+      size: 16 + Math.random() * 16,
+    });
+  }
+}
+// Función de animación
+function animateHearts() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+  redibujarPuntos(); 
+  redibujarLineas();
+  resaltarLineas(); 
+  ctx.drawImage(sprite, spritePos.x, spritePos.y-10, 40, 40); 
+  ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40);
+  hearts.forEach((heart) => {
+    // Dibujar cada corazón
+    ctx.drawImage(
+      heartImage,
+      0, 0, 32, 32,
+      heart.x, heart.y,
+      heart.size, heart.size
+    );
+
+    // Actualizar posición
+    heart.y -= heart.speed;
+
+    // Reiniciar posición si sale de pantalla
+    if (heart.y + heart.size < 0) {
+      heart.y = canvas.height + Math.random() * 100;
+      heart.x = Math.random() * canvas.width;
+    }
+  });
+
+  // Continuar la animación
+  animationId = requestAnimationFrame(animateHearts);
+}
 function inicializarCanvas(stage){
 
     // Limpia el canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //Quitar puentes
+    puentes.clear();
     // Crear los puntos en el canvas
     if(puntos.length === 0){
       crearPuntos();
@@ -144,10 +198,13 @@ function inicializarCanvas(stage){
     else{
       redibujarPuntos();
     }
+   
+
     // Agregar algunas líneas al momento de cargar la página
     //agregarLineasDefecto();
     // Ubicar el sprite en una posición determinada
     colocarSpriteEnAreaCercana(71, 59);
+    colocarUnicornioAreaCercana(71, 420);
     if(stage === 'stageZero'){
       renderizarStage(stageZero);
     }
@@ -217,6 +274,36 @@ function inicializarCanvas(stage){
         ctx.stroke();
         ctx.closePath();
        
+    }
+    
+    function colocarUnicornioAreaCercana(x, y)
+    {
+      // Obtener los cuatro puntos más cercanos
+      const puntosCercanos = puntos
+        .map(punto => ({
+          punto,
+          distancia: Math.hypot(punto.x - x, punto.y - y),
+        }))
+        .sort((a, b) => a.distancia - b.distancia)
+        .slice(0, 4) // Obtener los cuatro más cercanos
+        .map(item => item.punto);
+
+      // Calcular el rectángulo delimitado por los puntos cercanos
+      const xMin = Math.min(...puntosCercanos.map(p => p.x));
+      const xMax = Math.max(...puntosCercanos.map(p => p.x));
+      const yMin = Math.min(...puntosCercanos.map(p => p.y));
+      const yMax = Math.max(...puntosCercanos.map(p => p.y));
+
+      // Colocar el sprite en el centro del rectángulo
+      unicornioPos = {
+        x: xMin + (xMax - xMin) / 2 - 15, // Ajuste para centrar el sprite
+        y: yMin + (yMax - yMin) / 2 - 15,
+        columna: parseInt((xMin + (xMax - xMin) / 2 - 15) / separacion, 10),
+        fila: parseInt((yMin + (yMax - yMin) / 2 - 15) / separacion, 10),
+      };
+      unicornioAreaArea = puntosCercanos; // Guardar área del sprite
+      
+      ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40); // Dibujar el sprite
     }
     // Función para colocar un sprite en el área delimitada por los cuatro puntos más cercanos
     function colocarSpriteEnAreaCercana(x, y) {
@@ -437,13 +524,35 @@ function inicializarCanvas(stage){
         if(siBajaPuente){
           
           ctx.drawImage(sprite, spritePos.x, spritePos.y, 40, 40); // Dibujar el sprite en la nueva posición          
+          ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40); 
           resaltarLineas();     
         }
         else {  
           resaltarLineas(); 
-          ctx.drawImage(sprite, spritePos.x, spritePos.y-10, 40, 40); // Dibujar el sprite en la nueva posición          
-           
-        }        
+          ctx.drawImage(sprite, spritePos.x, spritePos.y-10, 40, 40); 
+          ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40);
+        }
+        if(spritePos.columna === unicornioPos.columna && spritePos.fila === unicornioPos.fila)
+        {
+          if (!animationId) {
+            initializeHearts(); // Recrear corazones
+            animateHearts(); // Iniciar animación
+          }
+        }    
+        else{
+          if (animationId !== undefined) {
+            cancelAnimationFrame(animationId); // Detener animación
+            animationId = null; // Reiniciar estado
+        
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+            redibujarPuntos(); 
+            redibujarLineas();
+            resaltarLineas(); 
+            ctx.drawImage(sprite, spritePos.x, spritePos.y-10, 40, 40); 
+            ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40);
+            hearts = []; // Eliminar corazones
+          }
+        }    
       }
     }
 

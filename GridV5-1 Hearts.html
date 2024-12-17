@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laberinto de papel</title>
+  <style>
+    canvas {
+      border: 1px solid #ddd;
+      display: block;
+      margin: 20px auto;
+      background-color: #f7f7f7;
+    }
+  </style>
+  
+</head>
+<body>
+  <canvas id="heartCanvas" width="400" height="300"></canvas>
+  <button id="startAnimation">Iniciar animación</button>
+  <button id="stopAnimation">Detener animación y limpiar</button>
+  
+  <script>
+    const canvas = document.getElementById('heartCanvas');
+    const ctx = canvas.getContext('2d');
+  
+    const heartImage = new Image();
+    heartImage.src = 'corazon.png'; // Ruta de tu imagen
+  
+    let hearts = []; // Lista de corazones
+    const heartCount = 10;
+    let animationId; // Identificador de la animación
+  
+    // Función para inicializar corazones
+    function initializeHearts() {
+      hearts = []; // Vaciar lista de corazones
+      for (let i = 0; i < heartCount; i++) {
+        hearts.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height + Math.random() * 100,
+          speed: 1 + Math.random() * 2,
+          size: 16 + Math.random() * 16,
+        });
+      }
+    }
+  
+    // Función de animación
+    function animateHearts() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+  
+      hearts.forEach((heart) => {
+        // Dibujar cada corazón
+        ctx.drawImage(
+          heartImage,
+          0, 0, 32, 32,
+          heart.x, heart.y,
+          heart.size, heart.size
+        );
+  
+        // Actualizar posición
+        heart.y -= heart.speed;
+  
+        // Reiniciar posición si sale de pantalla
+        if (heart.y + heart.size < 0) {
+          heart.y = canvas.height + Math.random() * 100;
+          heart.x = Math.random() * canvas.width;
+        }
+      });
+  
+      // Continuar la animación
+      animationId = requestAnimationFrame(animateHearts);
+    }
+  
+    // Evento para iniciar la animación
+    document.getElementById('startAnimation').addEventListener('click', () => {
+      if (!animationId) {
+        initializeHearts(); // Recrear corazones
+        animateHearts(); // Iniciar animación
+      }
+    });
+  
+    // Evento para detener y limpiar
+    document.getElementById('stopAnimation').addEventListener('click', () => {
+      cancelAnimationFrame(animationId); // Detener animación
+      animationId = null; // Reiniciar estado
+  
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+      hearts = []; // Eliminar corazones
+    });
+  </script>
+</body>
+</html>
