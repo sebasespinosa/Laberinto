@@ -21,6 +21,9 @@
   <div>
     <button id="zero" title="Laberinto Cero">Cero</button>
     <button id="one" title="Laberinto Uno">Uno</button>
+    <button id="two" title="Laberinto dos">Dos</button>
+    <button id="three" title="Laberinto tres">Tres</button>
+    <button id="four" title="Laberinto cuatro">Cuatro</button>
   </div>
   <script>
     // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
@@ -28,15 +31,26 @@
     //    inicializarCanvas('stageZero'); 
     const stages = {
       zero: () => {          
-          inicializarCanvas('stageZero');
+          inicializarCanvas('stageZero', 71, 59, 71, 420, 8, 8);
           },
       one: () => {           
-          inicializarCanvas('stageOne');
-          }          
+          inicializarCanvas('stageOne', 71, 59, 71, 420, 8, 8);
+          },
+      two: () => {           
+          inicializarCanvas('stageTwo', 71, 59, 71, 260, 8, 8);
+          },
+      three: () => {           
+          inicializarCanvas('stageThree', 71, 59, 71, 260, 8, 8);
+          },
+      four: () => {           
+          inicializarCanvas('stageFour', 71, 59, 71, 170, 4, 4);
+          }            
       };
     document.getElementById('zero').addEventListener('click', stages.zero);
     document.getElementById('one').addEventListener('click', stages.one);
-    
+    document.getElementById('two').addEventListener('click', stages.two);
+    document.getElementById('three').addEventListener('click', stages.three);
+    document.getElementById('four').addEventListener('click', stages.four);
   </script>
 </body>
 </html>

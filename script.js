@@ -1,10 +1,10 @@
 const canvas = document.getElementById('miCanvas');
 const ctx = canvas.getContext('2d');
-const puntos = [];
+let puntos = [];
 let lineas = [];
 const puentes = new Map();
-const filas = 8;
-const columnas = 8;
+let filas = 8;
+let columnas = 8;
 const separacion = 60;
 const FORBIDDEN_MOVES = new Set();
 let siEntraPuente = false;
@@ -71,6 +71,49 @@ const stageOne = [
   ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
   ['|', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
   ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.']
+];
+const stageTwo = [
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+  ['.', '-', '.', '-', '.', '*', '.', '-', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', '-', '.', '*', '.', '-', '.', '-', '.', ' ', '.', '-', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*', ' ', '|'],
+  ['.', '-', '.', '-', '.', '*', '.', '-', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', '*', '.', '-', '.', '-', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.']
+];
+const stageThree = [
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', ' ', '.', '-', '.', '-', '.', '-', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', '-', '.', ' ', '.', '*', '.', '-', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', '-', '.', '*', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', '-', '.', '-', '.', '*', '.', '-', '.', ' ', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|'],
+  ['.', ' ', '.', '-', '.', '-', '.', '-', '.', '-', '.', ' ', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.', '-', '.']
+];
+const stageFour = [
+  ['.', '-', '.', '-', '.', '-', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', '*', '.', ' ', '.'],
+  ['*', ' ', '*', ' ', ' ', ' ', '|'],
+  ['.', ' ', '.', '*', '.', ' ', '.'],
+  ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['.', '-', '.', '-', '.', '-', '.']
 ];
 const parseMapToLines = (mapa, puntos) => {
   const lineas = [];
@@ -185,15 +228,19 @@ function animateHearts() {
   // Continuar la animación
   animationId = requestAnimationFrame(animateHearts);
 }
-function inicializarCanvas(stage){
+function inicializarCanvas(stage, spritePosX, spritePosY, unicornPosX, unicornPosY, totalFilas, totalColumnas){
 
+    //Establecer total filas y total columnas
+    filas = totalFilas;
+    columnas = totalColumnas;
     // Limpia el canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //Quitar puentes
     puentes.clear();
     // Crear los puntos en el canvas
-    if(puntos.length === 0){
-      crearPuntos();
+    if(puntos.length !== filas * columnas){
+      puntos = [];
+      crearPuntos();      
     }
     else{
       redibujarPuntos();
@@ -203,13 +250,22 @@ function inicializarCanvas(stage){
     // Agregar algunas líneas al momento de cargar la página
     //agregarLineasDefecto();
     // Ubicar el sprite en una posición determinada
-    colocarSpriteEnAreaCercana(71, 59);
-    colocarUnicornioAreaCercana(71, 420);
+    colocarSpriteEnAreaCercana(spritePosX, spritePosY);
+    colocarUnicornioAreaCercana(unicornPosX, unicornPosY);
     if(stage === 'stageZero'){
       renderizarStage(stageZero);
     }
     if(stage === 'stageOne'){
       renderizarStage(stageOne);
+    }
+    if(stage === 'stageTwo'){
+      renderizarStage(stageTwo);
+    }
+    if(stage === 'stageThree'){
+      renderizarStage(stageThree);
+    }
+    if(stage === 'stageFour'){
+      renderizarStage(stageFour);
     }
 }
     
@@ -540,7 +596,7 @@ function inicializarCanvas(stage){
           }
         }    
         else{
-          if (animationId !== undefined) {
+          if (animationId !== undefined && animationId !== null) {
             cancelAnimationFrame(animationId); // Detener animación
             animationId = null; // Reiniciar estado
         
