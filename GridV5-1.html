@@ -30,8 +30,7 @@
   </div>
   <script>
     // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
-    //window.addEventListener('load', function() {
-    //    inicializarCanvas('stageZero'); 
+        
     const stages = {
       zero: () => {          
           inicializarCanvas('stageZero', 71, 59, 71, 420, 8, 8);
@@ -66,6 +65,9 @@
     document.getElementById('five').addEventListener('click', stages.five);
     document.getElementById('six').addEventListener('click', stages.six);
     document.getElementById('seven').addEventListener('click', stages.seven);
+    window.addEventListener('load', function() {
+      inicializarCanvas('stageZero', 71, 59, 71, 420, 8, 8); 
+    });
   </script>
 </body>
 </html>
