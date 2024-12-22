@@ -15,7 +15,7 @@
   
 </head>
 <body>
-  <canvas id="miCanvas" width="600" height="500"></canvas>
+  <canvas id="miCanvas" width="600" height="600"></canvas>
   <script src="script.js" defer></script>
   
   <div>
@@ -24,6 +24,9 @@
     <button id="two" title="Laberinto dos">Dos</button>
     <button id="three" title="Laberinto tres">Tres</button>
     <button id="four" title="Laberinto cuatro">Cuatro</button>
+    <button id="five" title="Laberinto cinco">Cinco</button>
+    <button id="six" title="Laberinto seis">Seis</button>
+    <button id="seven" title="Laberinto siete">Siete</button>
   </div>
   <script>
     // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
@@ -43,14 +46,26 @@
           inicializarCanvas('stageThree', 71, 59, 71, 260, 8, 8);
           },
       four: () => {           
-          inicializarCanvas('stageFour', 71, 59, 71, 170, 4, 4);
-          }            
+          inicializarCanvas('stageFour', 71, 59, 340, 180, 6, 6);
+          },
+      five: () => {           
+          inicializarCanvas('stageFive', 170, 155, 70, 230, 6, 6);
+          },
+      six: () => {           
+          inicializarCanvas('stageSix', 71, 59, 550, 520, 10, 10);
+          },
+      seven: () => {           
+          inicializarCanvas('stageSeven', 71, 59, 230, 230, 7, 7);
+          }                 
       };
     document.getElementById('zero').addEventListener('click', stages.zero);
     document.getElementById('one').addEventListener('click', stages.one);
     document.getElementById('two').addEventListener('click', stages.two);
     document.getElementById('three').addEventListener('click', stages.three);
     document.getElementById('four').addEventListener('click', stages.four);
+    document.getElementById('five').addEventListener('click', stages.five);
+    document.getElementById('six').addEventListener('click', stages.six);
+    document.getElementById('seven').addEventListener('click', stages.seven);
   </script>
 </body>
 </html>
