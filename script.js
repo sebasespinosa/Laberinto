@@ -299,7 +299,10 @@ function inicializarCanvas(stage, spritePosX, spritePosY, unicornPosX, unicornPo
       redibujarPuntos();
     }
    
-
+    //Quitar animación
+    cancelAnimationFrame(animationId); // Detener animación
+    animationId = null; // Reiniciar estado
+    hearts = []; // Eliminar corazones
     // Agregar algunas líneas al momento de cargar la página
     //agregarLineasDefecto();
     // Ubicar el sprite en una posición determinada
@@ -846,6 +849,8 @@ function inicializarCanvas(stage, spritePosX, spritePosY, unicornPosX, unicornPo
 
       //Poner Sprite
       ctx.drawImage(sprite, spritePos.x, spritePos.y, 40, 40);
+      //Poner unicornio
+      ctx.drawImage(unicorn, unicornioPos.x, unicornioPos.y, 40, 40);
       // Redibuja todas las líneas restantes
       lineas.forEach(linea => 
         dibujarLinea(linea.p1, linea.p2)        
