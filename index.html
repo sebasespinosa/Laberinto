@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Game</title>
+  <style>
+    canvas { border: 1px solid black; display: block; margin: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="miCanvas" width="480" height="480"></canvas>
+
+  <!-- Imágenes ocultas para uso con drawImage -->
+  <img id="spriteImg" src="./assets/sprite.png" style="display:none;">
+  <img id="unicornImg" src="./assets/unicorn.png" style="display:none;">
+  <img id="puenteImg" src="./assets/puente.png" style="display:none;">
+
+  <!-- Entrada principal del juego -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
