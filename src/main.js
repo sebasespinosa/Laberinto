@@ -4,12 +4,16 @@ import { crearJuego } from './game.js';
 import { instalarTeclado } from './input/keyboard.js';
 import { instalarEditor } from './input/editor.js';
 import { crearMenuNiveles } from './ui/levelMenu.js';
+import { crearControlesDireccion } from './ui/dpad.js';
 
 const canvas = document.getElementById('miCanvas');
 const juego = crearJuego(canvas);
 
 instalarTeclado((direccion) => juego.mover(direccion));
 instalarEditor(canvas, juego);
+crearControlesDireccion(document.getElementById('controles'), (direccion) =>
+  juego.mover(direccion)
+);
 crearMenuNiveles(document.getElementById('menuNiveles'), LEVELS, (nivel) =>
   juego.cargarNivel(nivel)
 );

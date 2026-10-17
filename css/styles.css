@@ -2,4 +2,92 @@ canvas {
   display: block;
   margin: 20px auto;
   background-color: #f7f7f7;
+  /* Se adapta a pantallas estrechas manteniendo la proporción */
+  max-width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+
+/* --- Controles de dirección en pantalla --- */
+.controles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 16px;
+}
+
+.controles-interruptor {
+  font:
+    14px system-ui,
+    sans-serif;
+  user-select: none;
+}
+
+/* Ocultos por defecto; se muestran en pantallas táctiles o si el usuario lo pide */
+.dpad {
+  display: none;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 64px);
+  grid-template-areas:
+    '. up .'
+    'left . right'
+    '. down .';
+  gap: 8px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .controles:not([data-controles='no']) .dpad {
+    display: grid;
+  }
+}
+
+.controles[data-controles='si'] .dpad {
+  display: grid;
+}
+
+.dpad button {
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  /* Sin zoom por doble toque, selección ni menú de pulsación larga */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dpad button:active {
+  background-color: #0056b3;
+}
+
+.dpad button:focus-visible {
+  outline: 3px solid #ffbf47;
+  outline-offset: 2px;
+}
+
+.dpad-up {
+  grid-area: up;
+}
+.dpad-left {
+  grid-area: left;
+}
+.dpad-right {
+  grid-area: right;
+}
+.dpad-down {
+  grid-area: down;
+}
+
+/* --- Menú de niveles --- */
+#menuNiveles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px 16px;
 }
