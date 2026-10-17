@@ -1,0 +1,146 @@
+{
+  "stageZero": {
+    "lineas": 28,
+    "especiales": 0,
+    "puentes": 0,
+    "filas": 8,
+    "columnas": 8,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 6,
+      "columna": 0
+    },
+    "traceHash": "f0919bd3084672b5a179bacff9a3ae54d79c664ce529a1372d281036510b8646",
+    "traceFinal": "5,0,false,false",
+    "traceDistinctCells": 48
+  },
+  "stageOne": {
+    "lineas": 66,
+    "especiales": 6,
+    "puentes": 4,
+    "filas": 8,
+    "columnas": 8,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 6,
+      "columna": 0
+    },
+    "traceHash": "1b7a98a6e35ce0dbfcc8b6fe62de60ec73618d98b3444851b23374bef4e6936a",
+    "traceFinal": "0,1,false,false",
+    "traceDistinctCells": 20
+  },
+  "stageTwo": {
+    "lineas": 66,
+    "especiales": 6,
+    "puentes": 4,
+    "filas": 8,
+    "columnas": 8,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 3,
+      "columna": 0
+    },
+    "traceHash": "4205d3453cd85818afceec35b07ec132cbd85427e8977d2b9df18c4edf10e0ab",
+    "traceFinal": "3,2,false,false",
+    "traceDistinctCells": 25
+  },
+  "stageThree": {
+    "lineas": 66,
+    "especiales": 5,
+    "puentes": 3,
+    "filas": 8,
+    "columnas": 8,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 3,
+      "columna": 0
+    },
+    "traceHash": "daacd07f8663ac782d866496c2f3a45304c30df283cd9db6b4a415226adaabf6",
+    "traceFinal": "4,5,false,false",
+    "traceDistinctCells": 23
+  },
+  "stageFour": {
+    "lineas": 39,
+    "especiales": 7,
+    "puentes": 4,
+    "filas": 6,
+    "columnas": 6,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 2,
+      "columna": 4
+    },
+    "traceHash": "ce7a790587cdcb0d4d3c6cffb110aa1ab9bfd8d1baa32a9fcd6203a4c1f80da6",
+    "traceFinal": "2,0,false,false",
+    "traceDistinctCells": 21
+  },
+  "stageFive": {
+    "lineas": 38,
+    "especiales": 4,
+    "puentes": 2,
+    "filas": 6,
+    "columnas": 6,
+    "sprite": {
+      "fila": 2,
+      "columna": 2
+    },
+    "unicornio": {
+      "fila": 3,
+      "columna": 0
+    },
+    "traceHash": "c8765221f1919af5c1f89778a40e5fcfa5ba878a6949d72ef0702eee4a54c313",
+    "traceFinal": "3,4,false,false",
+    "traceDistinctCells": 16
+  },
+  "stageSix": {
+    "lineas": 100,
+    "especiales": 2,
+    "puentes": 1,
+    "filas": 10,
+    "columnas": 10,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 8,
+      "columna": 8
+    },
+    "traceHash": "3023af82946d1062a948bb04aecbfc0a8daa788bea30c72fa0a68f84bd86d74e",
+    "traceFinal": "5,0,false,false",
+    "traceDistinctCells": 19
+  },
+  "stageSeven": {
+    "lineas": 51,
+    "especiales": 5,
+    "puentes": 3,
+    "filas": 7,
+    "columnas": 7,
+    "sprite": {
+      "fila": 0,
+      "columna": 0
+    },
+    "unicornio": {
+      "fila": 3,
+      "columna": 3
+    },
+    "traceHash": "ba8372eae355e96eff71cec86d70afa6f3ebe33ca62587b82c6a6c38225fcdb6",
+    "traceFinal": "3,4,false,false",
+    "traceDistinctCells": 13
+  }
+}
