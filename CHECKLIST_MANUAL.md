@@ -1,6 +1,6 @@
 # Checklist manual de regresión
 
-Desde la fase 3 el juego usa módulos ES y **no funciona con doble clic** (`file://`). Arrancar un servidor con `npm start` y abrir <http://localhost:8000/GridV5-1.html> (con la consola abierta) y verificar tras cada fase del refactor.
+Desde la fase 3 el juego usa módulos ES y **no funciona con doble clic** (`file://`). Arrancar un servidor con `npm start` y abrir <http://localhost:8000/> (con la consola abierta) y verificar tras cada fase del refactor.
 Los tests automáticos (`npm test`) cubren parseo de mapas, puentes y movimiento; esto cubre lo visual y la interacción.
 
 ## Niveles
