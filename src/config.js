@@ -34,3 +34,9 @@ export const CORAZONES = {
   margenInferior: 100, // los corazones nacen hasta 100px por debajo del canvas
   frame: 32, // lado del frame en la imagen corazon.png
 };
+
+// Botones de dirección: al mantener pulsado uno, el movimiento se repite
+export const REPETICION = {
+  retraso: 350, // ms hasta la primera repetición
+  intervalo: 150, // ms entre repeticiones
+};

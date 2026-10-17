@@ -45,3 +45,17 @@ Los tests automáticos (`npm test`) cubren parseo de mapas, puentes y movimiento
 - [ ] Clic en cualquier parte de un muro (no solo en su centro) lo marca/desmarca como especial.
 - [ ] Clic en un punto cercano a un muro selecciona el punto, no el muro.
 - [ ] Los 8 botones del menú siguen cargando su nivel.
+
+## Botones de dirección (ratón y táctil)
+
+Probar en escritorio y en un móvil real (con `npm start` desde el móvil: `http://<ip-del-ordenador>:8000/`) o con el modo dispositivo de Chrome con emulación táctil.
+
+- [ ] Escritorio: al cargar, la cruz está oculta y la casilla «Mostrar controles» desmarcada.
+- [ ] Marcar la casilla muestra la cruz; recargar la página mantiene la elección. Desmarcarla la oculta y también se recuerda.
+- [ ] Móvil/táctil: la cruz aparece sola. Desmarcar la casilla la oculta.
+- [ ] Un toque en un botón mueve exactamente una celda (no dos).
+- [ ] Mantener pulsado repite el movimiento tras una breve pausa; al soltar se detiene (también si el dedo se desliza fuera del botón).
+- [ ] Mantener pulsado no abre el menú contextual ni selecciona texto; el doble toque no hace zoom.
+- [ ] Con el teclado: Tab hasta un botón y Enter/Espacio lo activa; el foco se ve.
+- [ ] Los botones respetan los muros, los puentes y la llegada al unicornio igual que las flechas.
+- [ ] Pantalla estrecha (~390px): el canvas se adapta al ancho sin scroll horizontal y los clics de edición siguen acertando.
