@@ -1,7 +1,11 @@
 // Carga las imágenes del juego. Usa top-level await: quien importe este módulo
 // recibe las imágenes ya cargadas (sin carreras con el primer dibujado).
 
-function cargarImagen(src) {
+// Las rutas son relativas a la página HTML
+const CARPETA = 'sprites/';
+
+function cargarImagen(nombre) {
+  const src = CARPETA + nombre;
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => resolve(img);
