@@ -4,68 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laberinto de papel</title>
-  <style>
-    canvas {      
-      display: block;
-      margin: 20px auto;
-      background-color: #f7f7f7;
-    }
-  </style>  
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <canvas id="miCanvas" width="600" height="600"></canvas>
-  <script src="script.js" defer></script>
-  
-  <div>
-    <button id="zero" title="Laberinto Cero">Crea un laberinto!</button>
-    <button id="six" title="Laberinto seis">Laberinto 1</button>
-    <button id="five" title="Laberinto cinco">Laberinto 2</button>
-    <button id="three" title="Laberinto tres">Laberinto 3</button>
-    <button id="seven" title="Laberinto siete">Laberinto 4</button>
-    <button id="four" title="Laberinto cuatro">Laberinto 5</button>
-    <button id="one" title="Laberinto Uno">Laberinto 6</button>
-    <button id="two" title="Laberinto dos">Laberinto 7</button>
-  </div>
-  <script>
-    // Usa el evento 'load' para ejecutar la función de inicialización después de que todos los recursos se hayan cargado
-        
-    const stages = {
-      zero: () => {          
-          inicializarCanvas('stageZero', 71, 59, 71, 420, 8, 8);
-          },
-      one: () => {           
-          inicializarCanvas('stageOne', 71, 59, 71, 420, 8, 8);
-          },
-      two: () => {           
-          inicializarCanvas('stageTwo', 71, 59, 71, 260, 8, 8);
-          },
-      three: () => {           
-          inicializarCanvas('stageThree', 71, 59, 71, 260, 8, 8);
-          },
-      four: () => {           
-          inicializarCanvas('stageFour', 71, 59, 340, 180, 6, 6);
-          },
-      five: () => {           
-          inicializarCanvas('stageFive', 170, 155, 70, 230, 6, 6);
-          },
-      six: () => {           
-          inicializarCanvas('stageSix', 71, 59, 550, 520, 10, 10);
-          },
-      seven: () => {           
-          inicializarCanvas('stageSeven', 71, 59, 230, 230, 7, 7);
-          }                 
-      };
-    document.getElementById('zero').addEventListener('click', stages.zero);
-    document.getElementById('one').addEventListener('click', stages.one);
-    document.getElementById('two').addEventListener('click', stages.two);
-    document.getElementById('three').addEventListener('click', stages.three);
-    document.getElementById('four').addEventListener('click', stages.four);
-    document.getElementById('five').addEventListener('click', stages.five);
-    document.getElementById('six').addEventListener('click', stages.six);
-    document.getElementById('seven').addEventListener('click', stages.seven);
-    window.addEventListener('load', function() {
-      inicializarCanvas('stageZero', 71, 59, 71, 420, 8, 8); 
-    });
-  </script>
+  <div id="menuNiveles"></div>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
