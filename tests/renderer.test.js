@@ -66,17 +66,17 @@ test('render: limpia primero y pinta puntos antes que los muros', () => {
 
 test('render: el sprite va encima de los puentes y elevado', () => {
   const log = render(escena());
-  const puente = indice(log, 'img:woodenBridge60Rotated.png');
-  const sprite = indice(log, 'img:sprite3-1.png');
+  const puente = indice(log, 'img:sprites/woodenBridge60Rotated.png');
+  const sprite = indice(log, 'img:sprites/sprite3-1.png');
   assert.ok(puente >= 0 && sprite > puente);
   assert.ok(log[sprite].endsWith(`:100,${120 - SPRITE_ELEVACION},40,40`));
 });
 
 test('render: bajo un puente el sprite va antes que los muros especiales y sin elevar', () => {
   const log = render(escena({ bajoPuente: true }));
-  const sprite = indice(log, 'img:sprite3-1.png');
+  const sprite = indice(log, 'img:sprites/sprite3-1.png');
   assert.ok(sprite < indice(log, `linea:${COLORES.resalte}`));
-  assert.ok(sprite < indice(log, 'img:woodenBridge60Rotated.png'));
+  assert.ok(sprite < indice(log, 'img:sprites/woodenBridge60Rotated.png'));
   assert.ok(log[sprite].endsWith(':100,120,40,40'));
 });
 
@@ -88,5 +88,5 @@ test('render: punto seleccionado en color de resalte y corazones al final', () =
     })
   );
   assert.ok(log.includes(`punto:${COLORES.resalte}`));
-  assert.ok(log.at(-1).startsWith('img:corazon.png:0,0,32,32,5,6,20,20'));
+  assert.ok(log.at(-1).startsWith('img:sprites/corazon.png:0,0,32,32,5,6,20,20'));
 });

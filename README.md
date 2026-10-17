@@ -10,7 +10,7 @@ El juego usa módulos ES, así que no funciona abriendo el HTML con doble clic (
 npm start          # servidor en http://localhost:8000
 ```
 
-Abre <http://localhost:8000/GridV5-1.html>. Solo necesitas Python 3 para el servidor; las dependencias de `npm install` son únicamente de desarrollo (pruebas y estilo).
+Abre <http://localhost:8000/>. Solo necesitas Python 3 para el servidor; las dependencias de `npm install` son únicamente de desarrollo (pruebas y estilo).
 
 ## Cómo se juega
 
@@ -35,8 +35,9 @@ Un muro especial suelto, sin pareja, no forma puente y se cruza con normalidad.
 ## Estructura
 
 ```
-GridV5-1.html           página del juego (canvas + menú)
+index.html              página del juego (canvas + menú)
 css/styles.css
+sprites/                imágenes del juego (sprite, unicornio, puentes, corazones)
 src/
   main.js               arranque: crea el juego y conecta teclado, ratón y menú
   game.js               crearJuego(canvas): estado de la partida y API pública
@@ -56,6 +57,7 @@ src/
     editor.js           clics -> edición de muros y puentes
   ui/levelMenu.js       botones de nivel
 tests/                  pruebas (ver abajo)
+legacy/                 prototipos antiguos, solo como referencia
 ```
 
 La dependencia va siempre hacia el modelo: `model/` no importa nada de `render/`, `input/` ni `ui/`, y `game.js` es el único que une modelo y renderer.
