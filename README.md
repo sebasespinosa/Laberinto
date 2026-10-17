@@ -14,7 +14,8 @@ Abre <http://localhost:8000/>. Solo necesitas Python 3 para el servidor; las dep
 
 ## Cómo se juega
 
-- **Flechas**: mueven al sprite una celda. Los muros azules bloquean el paso.
+- **Flechas** del teclado: mueven al sprite una celda. Los muros azules bloquean el paso.
+- **Botones en pantalla** (▲ ◀ ▶ ▼): hacen lo mismo con el ratón o con el dedo, y mantenerlos pulsados repite el movimiento. Aparecen solos en dispositivos táctiles; en el resto se activan con la casilla «Mostrar controles» (la preferencia se recuerda).
 - **Botones**: cada uno carga un laberinto.
 - **Llegar al unicornio** lanza una lluvia de corazones.
 
@@ -56,6 +57,7 @@ src/
     keyboard.js         flechas -> direcciones
     editor.js           clics -> edición de muros y puentes
   ui/levelMenu.js       botones de nivel
+  ui/dpad.js            cruz de botones de dirección (ratón/táctil) con repetición
 tests/                  pruebas (ver abajo)
 legacy/                 prototipos antiguos, solo como referencia
 ```
